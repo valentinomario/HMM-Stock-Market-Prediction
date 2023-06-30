@@ -16,6 +16,10 @@ fracLow = (Open(llim:ulim) - Low(llim:ulim))./Open(llim:ulim);
 observations = [fracChange, fracHigh, fracLow];
 % preleviamo solo i primi campioni per il training del modello
 observations_train = observations(1:train_size, :);
+
+% TODO le osservazioni devono essere campionate: vedere tabella II del
+% paper
+
 % Parameters
 underlyingStates = 4;
 m = 5; % Number of mixture components for each state
@@ -53,10 +57,15 @@ A = 1/underlyingStates.*ones(underlyingStates,underlyingStates); % transition ma
 
 % calcoliamo la gaussian mixture distribution
 gm = fitgmdist(observations_train,m);
+% la covarianza del gruppo i-esimo è data da gm.Sigma(:,:,i)
 
-
+% la funzione hmmtrain richiede:
+% - un cell array contenente, in ogni cella, una sequenza di osservazioni
+% - una guess iniziale per la matrice delle transizioni
+% - una guess iniziale per la matrice delle emissioni (valutata dalla
+%    gaussian mixture) (di dimensione n_stati x n_uscite, vedi riga 20)
 observations_train_cell = convertToCellArray(observations_train, latency);
-[ESTTR,ESTEMIT] = hmmtrain(observations_train_cell, A, P');
+[ESTTR,ESTEMIT] = hmmtrain(observations_train_cell, A, gm);
 
 figure
 plot(Date_l,Close(llim:ulim));
