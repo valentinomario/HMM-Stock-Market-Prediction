@@ -1,4 +1,6 @@
 close all
+clear
+load Data.mat;
 
 ulim = indexOfDate(Date,'01/03/2008');
 llim = indexOfDate(Date,'01/02/2020');
