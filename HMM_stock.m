@@ -1,6 +1,6 @@
 close all
 
-ulim = indexOfDate(Date,'01/02/1998');
+ulim = indexOfDate(Date,'01/03/2008');
 llim = indexOfDate(Date,'01/02/2020');
 train_size = 3000;
 Date_l = Date(llim:ulim);
@@ -17,40 +17,47 @@ latency = 10; % days
 
 % Clustering observations
 
-figure
-subplot(3,3,1);
-plot(observations_train(:,1), observations_train(:,1),'o')
-subplot(3,3,2);
-plot(observations_train(:,1), observations_train(:,2),'o')
-subplot(3,3,3);
-plot(observations_train(:,1), observations_train(:,3),'o')
-
-subplot(3,3,4);
-plot(observations_train(:,2), observations_train(:,1),'o')
-subplot(3,3,5);
-plot(observations_train(:,2), observations_train(:,2),'o')
-subplot(3,3,6);
-plot(observations_train(:,2), observations_train(:,3),'o')
-
-subplot(3,3,7);
-plot(observations_train(:,3), observations_train(:,1),'o')
-subplot(3,3,8);
-plot(observations_train(:,3), observations_train(:,2),'o')
-subplot(3,3,9);
-plot(observations_train(:,3), observations_train(:,3),'o')
+% figure
+% subplot(3,3,1);
+% plot(observations_train(:,1), observations_train(:,1),'o')
+% subplot(3,3,2);
+% plot(observations_train(:,1), observations_train(:,2),'o')
+% subplot(3,3,3);
+% plot(observations_train(:,1), observations_train(:,3),'o')
+% 
+% subplot(3,3,4);
+% plot(observations_train(:,2), observations_train(:,1),'o')
+% subplot(3,3,5);
+% plot(observations_train(:,2), observations_train(:,2),'o')
+% subplot(3,3,6);
+% plot(observations_train(:,2), observations_train(:,3),'o')
+% 
+% subplot(3,3,7);
+% plot(observations_train(:,3), observations_train(:,1),'o')
+% subplot(3,3,8);
+% plot(observations_train(:,3), observations_train(:,2),'o')
+% subplot(3,3,9);
+% plot(observations_train(:,3), observations_train(:,3),'o')
 
 % Markov Chain guesses
 P = 1/underlyingStates.*ones(1,underlyingStates); % initial probabilities of the states
-A = 1/underlyingStates.*ones(1,underlyingStates); % transition matrix
+A = 1/underlyingStates.*ones(underlyingStates,underlyingStates); % transition matrix
 
-[m,v] = kmeansMeanVariance(observations_train,m);
+%[m,v] = kmeansMeanVariance(observations_train,m);
+%gm = gmdistribution(m,v);
+gm = fitgmdist(observations_train,m);
+
+[ESTTR,ESTEMIT] = hmmtrain(observations_train,A,P');
 
 figure
 plot(Date_l,Close(llim:ulim));
 figure
 subplot(3,1,1)
 bar(Date_l,fracChange)
+title('Frac Change')
 subplot(3,1,2)
 bar(Date_l,fracHigh)
+title('Frac High')
 subplot(3,1,3)
 bar(Date_l,fracLow)
+title('Frac Low')
