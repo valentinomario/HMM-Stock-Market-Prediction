@@ -1,7 +1,10 @@
 close all
 clear
-load Data.mat;
+clc
+load Data.mat;  % Date Open Close High Low
 
+% TUTTE LE DATE SONO NEL FORMATO MM/DD/YYYY
+% selezioniamo un periodo di osservazione
 ulim = indexOfDate(Date,'01/03/2008');
 llim = indexOfDate(Date,'01/02/2020');
 train_size = 3000;
@@ -10,15 +13,15 @@ fracChange = (Open(llim:ulim) - Close(llim:ulim))./Open(llim:ulim);
 fracHigh = (High(llim:ulim) - Close(llim:ulim))./Open(llim:ulim);
 fracLow = (Open(llim:ulim) - Low(llim:ulim))./Open(llim:ulim);
 
-observations=[fracChange, fracHigh, fracLow];
-observations_train = observations(1:train_size,:);
+observations = [fracChange, fracHigh, fracLow];
+% preleviamo solo i primi campioni per il training del modello
+observations_train = observations(1:train_size, :);
 % Parameters
 underlyingStates = 4;
 m = 5; % Number of mixture components for each state
 latency = 10; % days
 
 % Clustering observations
-
 % figure
 % subplot(3,3,1);
 % plot(observations_train(:,1), observations_train(:,1),'o')
@@ -47,9 +50,13 @@ A = 1/underlyingStates.*ones(underlyingStates,underlyingStates); % transition ma
 
 %[m,v] = kmeansMeanVariance(observations_train,m);
 %gm = gmdistribution(m,v);
+
+% calcoliamo la gaussian mixture distribution
 gm = fitgmdist(observations_train,m);
 
-[ESTTR,ESTEMIT] = hmmtrain(observations_train,A,P');
+
+observations_train_cell = convertToCellArray(observations_train, latency);
+[ESTTR,ESTEMIT] = hmmtrain(observations_train_cell, A, P');
 
 figure
 plot(Date_l,Close(llim:ulim));
