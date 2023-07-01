@@ -22,7 +22,7 @@
 %
 function cellArray = convertToCellArray(dataMatrix, observationsPerCell)
     [numObservations, ~] = size(dataMatrix);
-    
+
     % Calcola il numero totale di celle
     numCells = ceil(numObservations / observationsPerCell);
     

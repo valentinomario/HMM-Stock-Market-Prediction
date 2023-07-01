@@ -52,8 +52,8 @@ latency = 10; % days
 % plot(observations_train(:,3), observations_train(:,3),'o')
 
 % Markov Chain guesses
-P = 1/underlyingStates.*ones(1,underlyingStates); % initial probabilities of the states
-A = 1/underlyingStates.*ones(underlyingStates,underlyingStates); % transition matrix
+P = 1/underlyingStates.*ones(1, underlyingStates); % initial probabilities of the states
+A = 1/underlyingStates.*ones(underlyingStates, underlyingStates); % transition matrix
 
 %[m,v] = kmeansMeanVariance(observations_train,m);
 %gm = gmdistribution(m,v);
