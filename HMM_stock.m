@@ -17,8 +17,11 @@ observations = [fracChange, fracHigh, fracLow];
 % preleviamo solo i primi campioni per il training del modello
 observations_train = observations(1:train_size, :);
 
-% TODO le osservazioni devono essere campionate: vedere tabella II del
-% paper
+% le osservazioni devono essere campionate: vedere tabella II del paper
+number_of_points = [50, 10, 10];
+observations_train = [discretizeSequence(observations_train(:,1), number_of_points(1)),...
+    discretizeSequence(observations_train(:,2), number_of_points(2)),...
+    discretizeSequence(observations_train(:,3), number_of_points(3))];
 
 % Parameters
 underlyingStates = 4;
@@ -56,6 +59,7 @@ A = 1/underlyingStates.*ones(underlyingStates,underlyingStates); % transition ma
 %gm = gmdistribution(m,v);
 
 % calcoliamo la gaussian mixture distribution
+% TODO: garantire convergenza fitgmdist
 gm = fitgmdist(observations_train,m);
 % la covarianza del gruppo i-esimo è data da gm.Sigma(:,:,i)
 
@@ -64,6 +68,7 @@ gm = fitgmdist(observations_train,m);
 % - una guess iniziale per la matrice delle transizioni
 % - una guess iniziale per la matrice delle emissioni (valutata dalla
 %    gaussian mixture) (di dimensione n_stati x n_uscite, vedi riga 20)
+% TODO: ricavare guess iniziale matrice delle emissioni
 observations_train_cell = convertToCellArray(observations_train, latency);
 [ESTTR,ESTEMIT] = hmmtrain(observations_train_cell, A, gm);
 
