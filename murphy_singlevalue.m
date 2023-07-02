@@ -27,7 +27,7 @@ cofficientPerVector = 1;
 underlyingStates = 4;
 m = 5; % Number of mixture components for each state
 latency = 10; % days aka vectors in sequence
-numberOfSequences = 300;
+numberOfSequences = 300;    % prendiamo le seqs 1-10,11-20,...
 
 
 % Markov Chain guesses
@@ -39,7 +39,7 @@ A = 1/underlyingStates.*ones(underlyingStates, underlyingStates); % transition m
 
 % calcoliamo la gaussian mixture distribution
 % TODO: garantire convergenza fitgmdist
-gm = fitgmdist(observations_train,m);
+%   gm = fitgmdist(observations_train,m);
 % la covarianza del gruppo i-esimo è data da gm.Sigma(:,:,i)
 
 % la funzione hmmtrain richiede:
@@ -48,7 +48,16 @@ gm = fitgmdist(observations_train,m);
 % - una guess iniziale per la matrice delle emissioni (valutata dalla
 %    gaussian mixture) (di dimensione n_stati x n_uscite, vedi riga 20)
 % TODO: ricavare guess iniziale matrice delle emissioni
-emguess = ones(underlyingStates,number_of_points) ./ (underlyingStates*number_of_points);
-[obs_seq, edges] = discretize(observations_train,number_of_points);
-observations_train_cell = convertVectorToCellArray(obs_seq', latency);
-[ESTTR,ESTEMIT] = hmmtrain(observations_train_cell, A, emguess);
+%  emguess = ones(underlyingStates,number_of_points) ./ (underlyingStates*number_of_points);
+obs_tr_t = prepareSequenceTensor(observations_train,latency);
+[mu0, Sigma0] = mixgauss_init(underlyingStates*m, obs_tr_t, 'full');
+mu0 = reshape(mu0, [cofficientPerVector underlyingStates m]);
+Sigma0 = reshape(Sigma0, [cofficientPerVector cofficientPerVector underlyingStates m]);
+mixmat0 = mk_stochastic(rand(underlyingStates, m));
+% [obs_seq, edges] = discretize(observations_train,number_of_points);
+% observations_train_cell = convertVectorToCellArray(obs_seq', latency);
+% [ESTTR,ESTEMIT] = hmmtrain(observations_train_cell, A, emguess);
+[LL, prior1, transmat1, mu1, Sigma1, mixmat1] = ...
+    mhmm_em(obs_tr_t, P, A, mu0, Sigma0, mixmat0, 'max_iter', 15);
+
+
