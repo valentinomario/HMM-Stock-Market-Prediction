@@ -1,10 +1,8 @@
-function tensor = prepareSequenceTensor(dataMatrix, d)
-% prepareSequenceTensor: Prepara un tensore di dimensione o per d per (t - d + 1)
+function tensor = prepareSequenceTensor_old(dataMatrix, d)
+% Attenzione: finestratura ogni d!
+% prepareSequenceTensor: Prepara un tensore di dimensione o per d per (t/d)
 % a partire da una matrice di dimensione t per o, in cui ogni riga
 % rappresenta un'osservazione composta da o valori.
-% Il tensore rappresenta le sequenze di osservazioni
-% ottenute da una finestratura continua di dimensione d delle t
-% osservazioni.
 %
 % Uso:
 %   tensor = prepareSequenceTensor(dataMatrix, d)
@@ -16,7 +14,7 @@ function tensor = prepareSequenceTensor(dataMatrix, d)
 % Output:
 %   - tensor: Un tensore di dimensione o per d per (t/d) contenente le sequenze di osservazioni.
 %
-% Esempio:  TODO: cambiare
+% Esempio:
 %   dataMatrix = [1 2 3; 4 5 6; 7 8 9; 10 11 12; 13 14 15; 16 17 18];
 %   d = 2;
 %   tensor = prepareSequenceTensor(dataMatrix, d);
@@ -38,16 +36,16 @@ function tensor = prepareSequenceTensor(dataMatrix, d)
     [t, o] = size(dataMatrix);
     
     % Calcola il numero di sequenze
-    numSequences = t-d+1;
+    numSequences = floor(t / d);
     
     % Inizializza il tensore delle sequenze
     tensor = zeros(o, d, numSequences);
     
     % Riorganizza le osservazioni nel tensore delle sequenze
     for i = 1:numSequences
-        startIndex = i;
-        endIndex = i + d - 1;
-        tensor(:,:,i) = dataMatrix(startIndex:endIndex,:)';
+        startIndex = (i - 1) * d + 1;
+        endIndex = i * d;
+        tensor(:, :, i) = dataMatrix(startIndex:endIndex, :)';
     end
 end
 
