@@ -49,7 +49,7 @@ A = 1/underlyingStates.*ones(underlyingStates, underlyingStates); % transition m
 %    gaussian mixture) (di dimensione n_stati x n_uscite, vedi riga 20)
 % TODO: ricavare guess iniziale matrice delle emissioni
 %  emguess = ones(underlyingStates,number_of_points) ./ (underlyingStates*number_of_points);
-obs_tr_t = prepareSequenceTensor(observations_train,latency);
+obs_tr_t = prepareSequenceTensor(observations_train, latency);
 [mu0, Sigma0] = mixgauss_init(underlyingStates*m, obs_tr_t, 'full');
 mu0 = reshape(mu0, [cofficientPerVector underlyingStates m]);
 Sigma0 = reshape(Sigma0, [cofficientPerVector cofficientPerVector underlyingStates m]);
@@ -61,3 +61,7 @@ mixmat0 = mk_stochastic(rand(underlyingStates, m));
     mhmm_em(obs_tr_t, P, A, mu0, Sigma0, mixmat0, 'max_iter', 15);
 
 
+
+% pulizia
+% 3 valori per osservazione
+% prendere sequenze 1-10, 2-11, ...
