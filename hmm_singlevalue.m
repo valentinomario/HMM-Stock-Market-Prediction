@@ -5,8 +5,8 @@ load Data.mat;  % Date Open Close High Low
 
 % TUTTE LE DATE SONO NEL FORMATO MM/DD/YYYY
 % selezioniamo un periodo di osservazione
-ulim = indexOfDate(Date,'01/03/2008');
-llim = indexOfDate(Date,'01/02/2020');
+llim = indexOfDate(Date,'01/03/2008');
+ulim = indexOfDate(Date,'01/02/2020');
 train_size = 3000;
 Date_l = Date(llim:ulim);
 fracChange = (Open(llim:ulim) - Close(llim:ulim))./Open(llim:ulim);
