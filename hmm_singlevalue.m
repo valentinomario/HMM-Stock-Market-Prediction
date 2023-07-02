@@ -19,12 +19,12 @@ observations_train = observations(1:train_size);
 
 % le osservazioni devono essere campionate: vedere tabella II del paper
 %number_of_points = [50, 10, 10];
-number_of_points = 50;
+number_of_points = 5000;
 %observations_train_discr = [discretizeSequence(observations_train, number_of_points(1))];
 
 % Parameters
 underlyingStates = 4;
-m = 5; % Number of mixture components for each state
+m = 4; % Number of mixture components for each state
 latency = 10; % days
 
 % Markov Chain guesses
@@ -45,7 +45,12 @@ gm = fitgmdist(observations_train,m);
 % - una guess iniziale per la matrice delle emissioni (valutata dalla
 %    gaussian mixture) (di dimensione n_stati x n_uscite, vedi riga 20)
 % TODO: ricavare guess iniziale matrice delle emissioni
-emguess = ones(underlyingStates,number_of_points) ./ (underlyingStates*number_of_points);
+%emguess = ones(underlyingStates,number_of_points) ./ (underlyingStates*number_of_points);
+pdf_step = 0.2/number_of_points;
+pdf_samples = [-0.1+pdf_step:pdf_step:0.1]';
+%TODO: una emguess per ogni gaussiana
+emguess = pdf(gm,pdf_samples)';
+plot(pdf_samples,emguess);
 [obs_seq, edges] = discretize(observations_train,number_of_points);
 observations_train_cell = convertVectorToCellArray(obs_seq', latency);
 [ESTTR,ESTEMIT] = hmmtrain(observations_train_cell, A, emguess);
