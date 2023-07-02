@@ -25,7 +25,7 @@ observations_train = [discretizeSequence(observations_train(:,1), number_of_poin
 
 % Parameters
 underlyingStates = 4;
-m = 5; % Number of mixture components for each state
+m = 4; % Number of mixture components for each state
 latency = 10; % days
 
 % Clustering observations
