@@ -62,6 +62,7 @@ mixmat0 = mk_stochastic(rand(underlyingStates, m));
 
 
 
+% TODO
 % pulizia
 % 3 valori per osservazione
 % prendere sequenze 1-10, 2-11, ...
