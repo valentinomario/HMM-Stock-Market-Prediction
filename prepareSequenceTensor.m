@@ -16,24 +16,8 @@ function tensor = prepareSequenceTensor(dataMatrix, d)
 % Output:
 %   - tensor: Un tensore di dimensione o per d per (t/d) contenente le sequenze di osservazioni.
 %
-% Esempio:  TODO: cambiare
-%   dataMatrix = [1 2 3; 4 5 6; 7 8 9; 10 11 12; 13 14 15; 16 17 18];
-%   d = 2;
-%   tensor = prepareSequenceTensor(dataMatrix, d);
-%
-%   Il tensore risultante sarà:
-%   tensor(:,:,1) =
-%        1     2     3
-%        4     5     6
-%
-%   tensor(:,:,2) =
-%        7     8     9
-%       10    11    12
-%
-%   tensor(:,:,3) =
-%       13    14    15
-%       16    17    18
-%
+% Esempio:  TODO
+
     % Ottiene le dimensioni della matrice di dati
     [t, o] = size(dataMatrix);
     
