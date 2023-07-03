@@ -39,7 +39,7 @@ Sigma0 = reshape(Sigma0, [cofficientPerVector cofficientPerVector underlyingStat
 %mixmat0 = reshape(weights,[underlyingStates mixturesNumber]);
 mixmat0 = 1/mixturesNumber.*ones(underlyingStates, mixturesNumber);
 
-[LL, prior1, transmat1, mu1, Sigma1, mixmat1] = mhmm_em(obs_tr_t, initialProb, transitionMatrix, mu0, Sigma0, mixmat0, 'max_iter', 15);
+[LL, prior1, transmat1, mu1, Sigma1, mixmat1] = mhmm_em(obs_tr_t, initialProb, transitionMatrix, mu0, Sigma0, mixmat0, 'max_iter', 100);
 
 
 
