@@ -1,12 +1,12 @@
 close all
 clear
 clc
-load Data.mat;  % Date Open Close High Low
+load AAPL.mat;  % Date Open Close High Low
 
 % TUTTE LE DATE SONO NEL FORMATO MM/DD/YYYY
 % selezioniamo un periodo di osservazione
-llim = indexOfDate(Date,'03/01/2012');
-ulim = indexOfDate(Date,'01/02/2020');
+llim = indexOfDate(Date,'2003-02-10');
+ulim = indexOfDate(Date,'2004-09-10');
 train_size = 365;
 Date_l = Date(llim:ulim);
 fracChange = (Open(llim:ulim) - Close(llim:ulim))./Open(llim:ulim);
