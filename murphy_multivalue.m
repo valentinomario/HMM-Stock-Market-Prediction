@@ -27,11 +27,16 @@ latency = 10; % days aka vectors in sequence
 P = 1/underlyingStates.*ones(1, underlyingStates); % initial probabilities of the states
 A = 1/underlyingStates.*ones(underlyingStates, underlyingStates); % transition matrix
 
+observations_train(:,1) = discretize(observations_train(:,1),500);
+observations_train(:,2) = discretize(observations_train(:,2),100);
+observations_train(:,3) = discretize(observations_train(:,3),100);
 obs_tr_t = prepareSequenceTensor(observations_train, latency);
-[mu0, Sigma0] = mixgauss_init(underlyingStates*mixturesNumber, obs_tr_t, 'full');
+[mu0, Sigma0, weights] = mixgauss_init(underlyingStates*mixturesNumber, obs_tr_t, 'full');
 mu0 = reshape(mu0, [cofficientPerVector underlyingStates mixturesNumber]);
 Sigma0 = reshape(Sigma0, [cofficientPerVector cofficientPerVector underlyingStates mixturesNumber]);
-mixmat0 = mk_stochastic(rand(underlyingStates, mixturesNumber));
+%mixmat0 = mk_stochastic(rand(underlyingStates, mixturesNumber));
+mixmat0 = reshape(weights,[underlyingStates mixturesNumber]);
+
 [LL, prior1, transmat1, mu1, Sigma1, mixmat1] = mhmm_em(obs_tr_t, P, A, mu0, Sigma0, mixmat0, 'max_iter', 15);
 
 figure
