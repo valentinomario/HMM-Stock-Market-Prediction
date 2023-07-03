@@ -24,7 +24,7 @@ number_of_points = 5000;
 
 % Parameters
 underlyingStates = 4;
-m = 4; % Number of mixture components for each state
+m = 5; % Number of mixture components for each state
 latency = 10; % days
 
 % Markov Chain guesses
@@ -36,7 +36,7 @@ A = 1/underlyingStates.*ones(underlyingStates, underlyingStates); % transition m
 
 % calcoliamo la gaussian mixture distribution
 % TODO: garantire convergenza fitgmdist
-gm = fitgmdist(observations_train,m);
+gm = fitgmdist(observations_train,m*underlyingStates,'CovarianceType','diagonal','RegularizationValue',1e-4);
 % la covarianza del gruppo i-esimo è data da gm.Sigma(:,:,i)
 
 % la funzione hmmtrain richiede:
