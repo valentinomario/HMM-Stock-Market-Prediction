@@ -13,15 +13,15 @@ ulim = indexOfDate(Date,'2004-09-10');
 %train_size = 365;
 Date_l = Date(llim:ulim);
 fracChange = (Open(llim:ulim) - Close(llim:ulim))./Open(llim:ulim);
-fracHigh = (High(llim:ulim) - Close(llim:ulim))./Open(llim:ulim);
-fracLow = (Open(llim:ulim) - Low(llim:ulim))./Open(llim:ulim);
+fracHigh   = (High(llim:ulim) - Close(llim:ulim))./Open(llim:ulim);
+fracLow    = (Open(llim:ulim) - Low(llim:ulim))  ./Open(llim:ulim);
 
 continuos_observations3D = [fracChange, fracHigh, fracLow];
 
 numberOfPoints = [50 10 10];
 [fracChange, edgesFChange] = discretize(fracChange, numberOfPoints(1)-1);
-[fracHigh, edgesFHigh] = discretize(fracHigh, numberOfPoints(2)-1);
-[fracLow, edgesFLow] = discretize(fracLow, numberOfPoints(3)-1);
+[fracHigh, edgesFHigh]     = discretize(fracHigh, numberOfPoints(2)-1);
+[fracLow, edgesFLow]       = discretize(fracLow, numberOfPoints(3)-1);
 
 observations3D = [fracChange, fracHigh, fracLow];
 
@@ -34,7 +34,7 @@ underlyingStates = 4;
 mixturesNumber = 5; % Number of mixture components for each state
 latency = 10; % days aka vectors in sequence
 
-% Markov Chain guesses
+%% Markov Chain guesses
 initialProb = 1/underlyingStates.*ones(1, underlyingStates); % initial probabilities of the states
 transitionMatrix = 1/underlyingStates.*ones(underlyingStates, underlyingStates); % transition matrix
 
@@ -48,9 +48,7 @@ mu_sorted(:,2:3) = gm3D.mu(mu_index,2:3);
 % sigma sorting
 sigma_sorted = gm3D.Sigma(1, 1:3, mu_index);
 
-
 emissionProbabilities = zeros(underlyingStates,5000);
-
 for i = 1:underlyingStates
     gm_s{i} = gmdistribution(mu_sorted((1+(i-1)*mixturesNumber):(i*mixturesNumber),:), ...
                              sigma_sorted(1,:,(1+(i-1)*mixturesNumber):(i*mixturesNumber)));
@@ -120,7 +118,7 @@ for i = 1:length(sequence)
 end
 
 for i = 2:length(sequence)
-    prices(i) = prices(i-1)*(1+fC(i)); 
+    prices(i) = prices(i-1)*(1 - fC(i)); 
 end
 
 figure
@@ -159,6 +157,7 @@ title('Frac L')
 
 predictionLength = 10;
 predObservations3D = zeros(predictionLength, 3);
+predictedClose = zeros(predictionLength,1);
 
 for t = 1:predictionLength
 
@@ -166,14 +165,14 @@ for t = 1:predictionLength
     ulimPred = (ulim + t);
 
     predictionFracChange = (Open(llimPred:ulimPred) - Close(llimPred:ulimPred))./Open(llimPred:ulimPred);
-    predictionFracHigh = (High(llimPred:ulimPred) - Close(llimPred:ulimPred))./Open(llimPred:ulimPred);
-    predictionFracLow = (Open(llimPred:ulimPred) - Low(llimPred:ulimPred))./Open(llimPred:ulimPred);
+    predictionFracHigh   = (High(llimPred:ulimPred) - Close(llimPred:ulimPred))./Open(llimPred:ulimPred);
+    predictionFracLow    = (Open(llimPred:ulimPred) - Low(llimPred:ulimPred))./Open(llimPred:ulimPred);
         
     predictionFracChange = discretize(predictionFracChange, edgesFChange);
-    predictionFracHigh = discretize(predictionFracHigh, edgesFHigh);
-    predictionFracLow = discretize(predictionFracLow, edgesFLow);
+    predictionFracHigh   = discretize(predictionFracHigh, edgesFHigh);
+    predictionFracLow    = discretize(predictionFracLow, edgesFLow);
         
-    predictionObservations = zeros(latency, 1);
+    predictionObservations = zeros(1, latency);
     for i = 1:latency
         predictionObservations(i) = map3DTo1D(predictionFracChange(i), predictionFracHigh(i), predictionFracLow(i), numberOfPoints(1), numberOfPoints(2));
     end
@@ -182,7 +181,17 @@ for t = 1:predictionLength
     [predictedFC, predictedFH, predictedFL] = map1DTo3D(predictedObs, numberOfPoints(1), numberOfPoints(2));
     predObservations3D(t,:) = [edgesFChange(predictedFC), edgesFHigh(predictedFH), edgesFLow(predictedFL)];
 
+    predictedClose(t) = Open(ulimPred+t) * (1 - predObservations3D(t,1));
 end
+
+% grafici
+figure
+plot(Date(llim : (ulim + predictionLength)), Close(llim:(ulim + predictionLength)));
+grid on
+hold on
+plot(Date(ulimPred+1 : ulimPred + predictionLength), predictedClose);
+title('andamento prezzi dati reali vs predizione')
+
 
 
 

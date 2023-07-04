@@ -45,7 +45,7 @@ else
     end
     predictedObservation = mostLikelyObs;
     if (verbose)
-        fprintf("Logaritmo probabilita' sequenza: %1$.4f", maxLogPSeq);
+        fprintf("Logaritmo probabilita' sequenza: %1$.4f\n", maxLogPSeq);
     end
 end
 
