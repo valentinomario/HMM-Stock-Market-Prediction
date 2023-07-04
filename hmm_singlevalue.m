@@ -1,13 +1,12 @@
 close all
 clear
 clc
-load Data.mat;  % Date Open Close High Low
-
+load('AAPL.mat')
 % TUTTE LE DATE SONO NEL FORMATO MM/DD/YYYY
 % selezioniamo un periodo di osservazione
-llim = indexOfDate(Date,'01/03/2008');
-ulim = indexOfDate(Date,'01/02/2020');
-train_size = 3000;
+llim = indexOfDate(Date,'2003-02-10');
+ulim = indexOfDate(Date,'2004-09-10');
+train_size = 365;
 Date_l = Date(llim:ulim);
 fracChange = (Open(llim:ulim) - Close(llim:ulim))./Open(llim:ulim);
 % fracHigh = (High(llim:ulim) - Close(llim:ulim))./Open(llim:ulim);
@@ -36,7 +35,7 @@ A = 1/underlyingStates.*ones(underlyingStates, underlyingStates); % transition m
 
 % calcoliamo la gaussian mixture distribution
 % TODO: garantire convergenza fitgmdist
-gm = fitgmdist(observations_train,m*underlyingStates,'CovarianceType','diagonal','RegularizationValue',1e-4);
+gm = fitgmdist(observations_train,m*underlyingStates,'CovarianceType','diagonal','RegularizationValue',0);
 % la covarianza del gruppo i-esimo è data da gm.Sigma(:,:,i)
 
 % la funzione hmmtrain richiede:
