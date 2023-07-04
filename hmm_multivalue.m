@@ -98,7 +98,7 @@ end
 %     [ESTTR,ESTEMIT] = hmmtrain(observations(i:(i+latency)), ESTTR, ESTEMIT,'Verbose',true);
 % end
 
-save("hmmtrain.mat", "ESTTR", "ESTEMIT");
+save(strcat("hmmtrain-", string(datetime('now', 'format', 'yyyy-MM-dd-HH-mm-ss')), ".mat"), "ESTTR", "ESTEMIT");
 
 %% simulazione hmmgenerate
 
