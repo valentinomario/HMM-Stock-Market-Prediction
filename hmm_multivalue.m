@@ -68,7 +68,7 @@ for i=1:(length(Date_l)-latency)
     observations_train(i,:) = observations(i:(i+latency-1));
 end
 
-[ESTTR,ESTEMIT] = hmmtrain(observations(startIndex:endIndex), transitionMatrix, emissionProbabilities,'Verbose',true);
+[ESTTR,ESTEMIT] = hmmtrain(observations, transitionMatrix, emissionProbabilities,'Verbose',true);
 
 
 
