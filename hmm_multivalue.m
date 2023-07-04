@@ -98,7 +98,10 @@ end
 %     [ESTTR,ESTEMIT] = hmmtrain(observations(i:(i+latency)), ESTTR, ESTEMIT,'Verbose',true);
 % end
 
-%% 
+save("hmmtrain.mat", "ESTTR", "ESTEMIT");
+
+%% simulazione hmmgenerate
+
 [sequence, states] = hmmgenerate(400, ESTTR, ESTEMIT);
 
 prices = zeros(1,length(sequence));
@@ -110,8 +113,6 @@ for i = 1:length(sequence)
     fH(i) = edgesFHigh(fHtemp);
     fL(i) = edgesFLow(fLtemp);
 end
-
-
 
 for i = 2:length(sequence)
     prices(i) = prices(i-1)*(1+fC(i)); 
