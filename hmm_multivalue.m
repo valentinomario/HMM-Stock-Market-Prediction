@@ -121,9 +121,11 @@ end
 figure
 subplot(2,1,1)
 plot(Date_l,Close(llim:ulim));
+grid on
 title('andamento prezzi dati reali')
 subplot(2,1,2)
 plot(Date_l,prices);
+grid on
 title('andamento prezzi simulazione')
 
 figure
