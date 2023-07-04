@@ -1,6 +1,9 @@
 close all
 clear
 clc
+
+TRAIN = 0;
+
 load AAPL.mat;  % Date Open Close High Low
 
 % TUTTE LE DATE SONO NEL FORMATO MM/DD/YYYY
@@ -89,16 +92,18 @@ end
 % end
 
 %% train
-
-[ESTTR,ESTEMIT] = hmmtrain(observations_train, transitionMatrix, emissionProbabilities,'Verbose',true,'Maxiterations',150);
-
+if (TRAIN)
+    [ESTTR,ESTEMIT] = hmmtrain(observations_train, transitionMatrix, emissionProbabilities,'Verbose',true,'Maxiterations',150);
+    save(strcat("hmmtrain-", string(datetime('now', 'format', 'yyyy-MM-dd-HH-mm-ss')), ".mat"), "ESTTR", "ESTEMIT");
+else 
+    load("hmmtrain.mat");
+end
 % ESTTR   = transitionMatrix;
 % ESTEMIT = emissionProbabilities;
 % for i=1:(length(Date_l)-latency)
 %     [ESTTR,ESTEMIT] = hmmtrain(observations(i:(i+latency)), ESTTR, ESTEMIT,'Verbose',true);
 % end
 
-save(strcat("hmmtrain-", string(datetime('now', 'format', 'yyyy-MM-dd-HH-mm-ss')), ".mat"), "ESTTR", "ESTEMIT");
 
 %% simulazione hmmgenerate
 
@@ -150,6 +155,34 @@ subplot(3,1,3)
 bar(Date_l,fL)
 title('Frac L')
 
+%% predizione
+
+predictionLength = 10;
+predObservations3D = zeros(predictionLength, 3);
+
+for t = 1:predictionLength
+
+    llimPred = (ulim - latency + 1 + t);
+    ulimPred = (ulim + t);
+
+    predictionFracChange = (Open(llimPred:ulimPred) - Close(llimPred:ulimPred))./Open(llimPred:ulimPred);
+    predictionFracHigh = (High(llimPred:ulimPred) - Close(llimPred:ulimPred))./Open(llimPred:ulimPred);
+    predictionFracLow = (Open(llimPred:ulimPred) - Low(llimPred:ulimPred))./Open(llimPred:ulimPred);
+        
+    predictionFracChange = discretize(predictionFracChange, edgesFChange);
+    predictionFracHigh = discretize(predictionFracHigh, edgesFHigh);
+    predictionFracLow = discretize(predictionFracLow, edgesFLow);
+        
+    predictionObservations = zeros(latency, 1);
+    for i = 1:latency
+        predictionObservations(i) = map3DTo1D(predictionFracChange(i), predictionFracHigh(i), predictionFracLow(i), numberOfPoints(1), numberOfPoints(2));
+    end
+
+    predictedObs = hmmPredictObservation(predictionObservations, ESTTR, ESTEMIT, 'verbose', 1, 'possibleObservations', 1:5000);
+    [predictedFC, predictedFH, predictedFL] = map1DTo3D(predictedObs, numberOfPoints(1), numberOfPoints(2));
+    predObservations3D(t,:) = [edgesFChange(predictedFC), edgesFHigh(predictedFH), edgesFLow(predictedFL)];
+
+end
 
 
 
