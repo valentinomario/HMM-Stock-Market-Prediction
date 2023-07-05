@@ -225,11 +225,15 @@ p1.MarkerSize = 5;
 %p2 = plot(Date(ulim +1 : lastPredDate), predictedClose);
 for i=1:predictionLength - 1
     if (predictedClose(i) ~= 0)
-        p2 = plot(Date(ulim + i - 1 : ulim + i), [Close(ulim + i -1), predictedClose(i)]);
-        p2.Color='r';
-        p2.LineWidth = 0.3;
-        p2.Marker = '.';
-        p2.MarkerSize = 5;
+        p2(i) = plot(Date(ulim + i - 1 : ulim + i), [Close(ulim + i -1), predictedClose(i)]);
+        if (sign(predictedClose(i) - Close(ulim + i - 1)) == sign(Close(ulim + i) - Close(ulim + i - 1)))
+            p2(i).Color = 'g';
+        else
+            p2(i).Color='r';
+        end
+        p2(i).LineWidth = 0.3;
+        p2(i).Marker = '.';
+        p2(i).MarkerSize = 5;
     end
 end
 % p2.Color='r';
