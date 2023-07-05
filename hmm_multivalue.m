@@ -169,12 +169,12 @@ title('Frac L')
 
 %% predizione
 
-predictionLength = 10;
+predictionLength = 50;
 predObservations3D = zeros(predictionLength, 3);
 predictedClose = zeros(predictionLength,1);
 
 for t = 1:predictionLength
-
+    disp("Predizione " + t);
 %vecchi estremi del 04/07
 %     llimPred = (ulim - latency + 1 + t);
 %     ulimPred = (ulim + t);
@@ -196,9 +196,10 @@ for t = 1:predictionLength
     end
 
     predictedObs = hmmPredictObservation(predictionObservations, ESTTR, ESTEMIT, 'verbose', 1, 'possibleObservations', 1:5000);
-    [predictedFC, predictedFH, predictedFL] = map1DTo3D(predictedObs, numberOfPoints(1), numberOfPoints(2));
-    predObservations3D(t,:) = [edgesFChange(predictedFC), edgesFHigh(predictedFH), edgesFLow(predictedFL)];
-
+    if(~isnan(predictedObs))
+        [predictedFC, predictedFH, predictedFL] = map1DTo3D(predictedObs, numberOfPoints(1), numberOfPoints(2));
+        predObservations3D(t,:) = [edgesFChange(predictedFC), edgesFHigh(predictedFH), edgesFLow(predictedFL)];
+    end
     % !!! prima era Open(ulimPred+t), lucy e ludo credono fosse sbagliato
     predictedClose(t) = Open(ulimPred+1) * (1 - predObservations3D(t,1));
 end
