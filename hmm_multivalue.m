@@ -222,14 +222,18 @@ p1.LineWidth = 0.3;
 p1.Marker = '.';
 p1.MarkerSize = 5;
 
+prediction = struct('good', 0, 'bad', 0);
+p2 = gobjects(predictionLength - 1, 1);
 %p2 = plot(Date(ulim +1 : lastPredDate), predictedClose);
 for i=1:predictionLength - 1
     if (predictedClose(i) ~= 0)
         p2(i) = plot(Date(ulim + i - 1 : ulim + i), [Close(ulim + i -1), predictedClose(i)]);
         if (sign(predictedClose(i) - Close(ulim + i - 1)) == sign(Close(ulim + i) - Close(ulim + i - 1)))
             p2(i).Color = 'g';
+            prediction.good = prediction.good + 1;
         else
             p2(i).Color='r';
+            prediction.bad = prediction.bad + 1;
         end
         p2(i).LineWidth = 0.3;
         p2(i).Marker = '.';
@@ -241,6 +245,11 @@ end
 % p2.Marker = '.';
 % p2.MarkerSize = 5;
 title('andamento prezzi dati reali vs predizione')
+
+fprintf("Total predictions: %d\nCorrect derivative: %d (%.2f%%)\nWrong derivative: %d (%.2f%%)\n", ...
+    prediction.bad + prediction.good, ...
+    prediction.good, 100 * prediction.good / (prediction.bad + prediction.good), ...
+    prediction.bad, 100 * prediction.bad / (prediction.bad + prediction.good));
 
 
 
