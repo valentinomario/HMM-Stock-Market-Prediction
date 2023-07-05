@@ -90,12 +90,23 @@ end
 % end
 
 %% train
+
 if (TRAIN)
+    lastwarn('', '');
     [ESTTR,ESTEMIT] = hmmtrain(observations_train, transitionMatrix, emissionProbabilities,'Verbose',true,'Maxiterations',150);
-    save(strcat("hmmtrain-", string(datetime('now', 'format', 'yyyy-MM-dd-HH-mm-ss')), ".mat"), "ESTTR", "ESTEMIT");
-else 
+    [warnMsg, warnId] = lastwarn();
+    if(isempty(warnId))
+        noProblem();
+        converged = 1;
+    else
+        %error(warnMsg, warnId);
+        converged = 0;
+    end
+    save(strcat("hmmtrain-", string(datetime('now', 'format', 'yyyy-MM-dd-HH-mm-ss')), ".mat"), "ESTTR", "ESTEMIT","converged");
+else
     load("hmmtrain.mat");
 end
+
 % ESTTR   = transitionMatrix;
 % ESTEMIT = emissionProbabilities;
 % for i=1:(length(Date_l)-latency)
@@ -105,7 +116,7 @@ end
 
 %% simulazione hmmgenerate
 
-[sequence, states] = hmmgenerate(400, ESTTR, ESTEMIT);
+[sequence, states] = hmmgenerate(length(Date_l), ESTTR, ESTEMIT);
 
 prices = zeros(1,length(sequence));
 prices(1) = Close(llim);
@@ -161,12 +172,16 @@ predictedClose = zeros(predictionLength,1);
 
 for t = 1:predictionLength
 
-    llimPred = (ulim - latency + 1 + t);
-    ulimPred = (ulim + t);
+%vecchi estremi del 04/07
+%     llimPred = (ulim - latency + 1 + t);
+%     ulimPred = (ulim + t);
+
+    llimPred = (ulim - latency + t);    
+    ulimPred = (ulim + t -1);           
 
     predictionFracChange = (Open(llimPred:ulimPred) - Close(llimPred:ulimPred))./Open(llimPred:ulimPred);
     predictionFracHigh   = (High(llimPred:ulimPred) - Close(llimPred:ulimPred))./Open(llimPred:ulimPred);
-    predictionFracLow    = (Open(llimPred:ulimPred) - Low(llimPred:ulimPred))./Open(llimPred:ulimPred);
+    predictionFracLow    = (Open(llimPred:ulimPred) - Low(llimPred:ulimPred))  ./Open(llimPred:ulimPred);
         
     predictionFracChange = discretize(predictionFracChange, edgesFChange);
     predictionFracHigh   = discretize(predictionFracHigh, edgesFHigh);
@@ -181,15 +196,26 @@ for t = 1:predictionLength
     [predictedFC, predictedFH, predictedFL] = map1DTo3D(predictedObs, numberOfPoints(1), numberOfPoints(2));
     predObservations3D(t,:) = [edgesFChange(predictedFC), edgesFHigh(predictedFH), edgesFLow(predictedFL)];
 
-    predictedClose(t) = Open(ulimPred+t) * (1 - predObservations3D(t,1));
+    % !!! prima era Open(ulimPred+t), lucy e ludo credono fosse sbagliato
+    predictedClose(t) = Open(ulimPred+1) * (1 - predObservations3D(t,1));
 end
 
-% grafici
+%% grafici
+
+lastPredDate = (ulim  + predictionLength);
+
 figure
-plot(Date(llim : (ulim + predictionLength)), Close(llim:(ulim + predictionLength)));
+p1 = plot(Date(llim : lastPredDate), Close(llim:lastPredDate));
 grid on
 hold on
-plot(Date(ulimPred+1 : ulimPred + predictionLength), predictedClose);
+p1.LineWidth = 0.3;
+p1.Marker = '.';
+p1.MarkerSize = 5;
+
+p2 = plot(Date(ulim +1 : lastPredDate), predictedClose);
+p2.LineWidth = 0.3;
+p2.Marker = '.';
+p2.MarkerSize = 5;
 title('andamento prezzi dati reali vs predizione')
 
 
