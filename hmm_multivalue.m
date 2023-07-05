@@ -223,12 +223,14 @@ p1.Marker = '.';
 p1.MarkerSize = 5;
 
 %p2 = plot(Date(ulim +1 : lastPredDate), predictedClose);
-for i=1:predictionLength -1
-    p2 = plot(Date(ulim + i -1 :ulim+i),[ Close(ulim + i -1) predictedClose(i)]);
-    p2.Color='r';
-    p2.LineWidth = 0.3;
-    p2.Marker = '.';
-    p2.MarkerSize = 5;
+for i=1:predictionLength - 1
+    if (predictedClose(i) ~= 0)
+        p2 = plot(Date(ulim + i - 1 : ulim + i), [Close(ulim + i -1), predictedClose(i)]);
+        p2.Color='r';
+        p2.LineWidth = 0.3;
+        p2.Marker = '.';
+        p2.MarkerSize = 5;
+    end
 end
 % p2.Color='r';
 % p2.LineWidth = 0.3;
