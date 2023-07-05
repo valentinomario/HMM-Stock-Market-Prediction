@@ -169,7 +169,7 @@ title('Frac L')
 
 %% predizione
 
-predictionLength = 50;
+predictionLength = 360;
 predObservations3D = zeros(predictionLength, 3);
 predictedClose = zeros(predictionLength,1);
 
@@ -199,9 +199,15 @@ for t = 1:predictionLength
     if(~isnan(predictedObs))
         [predictedFC, predictedFH, predictedFL] = map1DTo3D(predictedObs, numberOfPoints(1), numberOfPoints(2));
         predObservations3D(t,:) = [edgesFChange(predictedFC), edgesFHigh(predictedFH), edgesFLow(predictedFL)];
+    else
+        predObservations3D(t,:) = NaN;
     end
     % !!! prima era Open(ulimPred+t), lucy e ludo credono fosse sbagliato
-    predictedClose(t) = Open(ulimPred+1) * (1 - predObservations3D(t,1));
+    if(isnan(predictedObs))
+        predictedClose(t)=0;
+    else
+        predictedClose(t) = Open(ulimPred+1) * (1 - predObservations3D(t,1));
+    end
 end
 
 %% grafici
