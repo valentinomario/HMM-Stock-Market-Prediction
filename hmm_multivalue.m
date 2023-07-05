@@ -92,16 +92,20 @@ end
 %% train
 
 if (TRAIN)
+    maxIter = 500;      %#ok<UNRCH> 
+    trainInfo = struct('maxIter', maxIter, 'converged', 0, 'trainingTime', -1);
     lastwarn('', '');
-    [ESTTR,ESTEMIT] = hmmtrain(observations_train, transitionMatrix, emissionProbabilities,'Verbose',true,'Maxiterations',150);
+    tic     % start cronometro
+    [ESTTR,ESTEMIT] = hmmtrain(observations_train, transitionMatrix, emissionProbabilities,'Verbose',true,'Maxiterations', maxIter);
+    trainInfo.trainingTime = toc;   % fine cronometro
     [warnMsg, warnId] = lastwarn();
     if(isempty(warnId))
-        converged = 1;
+        trainInfo.converged = 1;
     else
         %error(warnMsg, warnId);
-        converged = 0;
+        trinInfo.converged = 0;
     end
-        save(strcat("hmmtrain-", string(datetime('now', 'format', 'yyyy-MM-dd-HH-mm-ss')), ".mat"), "ESTTR", "ESTEMIT","converged");
+        save(strcat("hmmtrain-", string(datetime('now', 'format', 'yyyy-MM-dd-HH-mm-ss')), ".mat"), "ESTTR", "ESTEMIT","trainInfo");
 else
     load("hmmtrain.mat");
 end
