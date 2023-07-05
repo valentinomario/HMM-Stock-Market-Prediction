@@ -105,7 +105,7 @@ if (TRAIN)
         %error(warnMsg, warnId);
         trinInfo.converged = 0;
     end
-        save(strcat("hmmtrain-", string(datetime('now', 'format', 'yyyy-MM-dd-HH-mm-ss')), ".mat"), "ESTTR", "ESTEMIT","trainInfo");
+    save(strcat("hmmtrain-", string(datetime('now', 'format', 'yyyy-MM-dd-HH-mm-ss')), ".mat"), "ESTTR", "ESTEMIT","trainInfo");
 else
     load("hmmtrain.mat");
 end
@@ -208,7 +208,7 @@ end
 
 lastPredDate = (ulim  + predictionLength);
 
-figure
+figure(Name='Real vs predicted data')
 p1 = plot(Date(llim : lastPredDate), Close(llim:lastPredDate));
 grid on
 hold on
