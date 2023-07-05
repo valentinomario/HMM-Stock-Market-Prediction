@@ -96,13 +96,12 @@ if (TRAIN)
     [ESTTR,ESTEMIT] = hmmtrain(observations_train, transitionMatrix, emissionProbabilities,'Verbose',true,'Maxiterations',150);
     [warnMsg, warnId] = lastwarn();
     if(isempty(warnId))
-        noProblem();
         converged = 1;
     else
         %error(warnMsg, warnId);
         converged = 0;
     end
-    save(strcat("hmmtrain-", string(datetime('now', 'format', 'yyyy-MM-dd-HH-mm-ss')), ".mat"), "ESTTR", "ESTEMIT","converged");
+        save(strcat("hmmtrain-", string(datetime('now', 'format', 'yyyy-MM-dd-HH-mm-ss')), ".mat"), "ESTTR", "ESTEMIT","converged");
 else
     load("hmmtrain.mat");
 end
