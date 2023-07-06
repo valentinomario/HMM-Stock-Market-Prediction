@@ -18,9 +18,12 @@ function predictedObservation = hmmPredictObservation(obsSeq, transMatrix, emiss
 p = inputParser;
 addParameter(p, 'verbose', 0)
 addParameter(p, 'possibleObservations', [])
+addParameter(p, 'dynamicWindow',1)
+
 parse(p, varargin{:})
 verbose = p.Results.verbose;
 possibleObservations = p.Results.possibleObservations;
+dynamicWindow = p.Results.dynamicWindow;
 
 if isempty(possibleObservations)
     % Se non sono specificate possibili osservazioni, esegui la predizione
@@ -48,7 +51,13 @@ else
 
     maxLogPSeq = -Inf;
     mostLikelyObs = NaN;
-    converged = 0;
+    
+    if dynamicWindow
+        converged = 0;
+    else
+        converged = 1;
+    end
+    
     while converged == 0
         for possibleObs = possibleObservations      % per ogni possibile osservazione
             [~, logPSeq] = hmmdecode([obsSeq, possibleObs], transMatrix, emissMatrix);  % come alternativa possiamo mettere obsSeq(2:end), così che la sequenza sia lunga 10
