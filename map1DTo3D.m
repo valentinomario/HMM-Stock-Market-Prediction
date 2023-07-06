@@ -16,7 +16,7 @@ function [x, y, z] = map1DTo3D(n, maxX, maxY,maxZ)
 %
     % Calcola le coordinate (x, y, z) corrispondenti all'indice 1D n
     if  n>(maxZ-1)*(maxX*maxY) + (maxY-1)*maxX + maxX;
-         n=(maxZ-1)*(maxX*maxY) + (maxY-1)*maxX + maxX;
+         error("numero da convertire non valido n=%1$.4f",n);
     else 
         z = floor((n-1) / (maxX*maxY)) + 1;
         y = floor(((n-1) - (z-1)*(maxX*maxY)) / maxX) + 1;
