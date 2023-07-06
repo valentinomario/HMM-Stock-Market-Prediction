@@ -23,21 +23,33 @@ verbose = p.Results.verbose;
 possibleObservations = p.Results.possibleObservations;
 
 if isempty(possibleObservations)
+    % Se non sono specificate possibili osservazioni, esegui la predizione
+    % utilizzando l'approccio standard: cerco di tradurre la sequenza di
+    % osservazioni in una sequenza di stati, valuto la probabilità per
+    % ognuno dei possibili prossimi stati, prendo l'emissione con massima
+    % probabilità
+
     [states, logPSeq] = hmmdecode(obsSeq, transMatrix, emissMatrix);
     
     lastStateP = states(:,end);
+    % Calcolo delle probabilità per ogni possibile prossimo stato
     nextStateP = transMatrix' * lastStateP; % è una colonna 
+    % Calcolo delle probabilità per ogni possibile emissione
     nextObsP = emissMatrix' * nextStateP;   % ancora una colonna
-    
+    % Scelgo l'emissione con massima probabilità
     [pObs, predictedObservation] = max(nextObsP);
     if (verbose)
         fprintf("Logaritmo probabilita' sequenza: %1$.4f\nProbabilita' osservazione: %2$.4f", logPSeq, pObs);
     end
 else
+    % avendo a disposizione il (sub)set delle possibili osservazioni,
+    % calcolo la likelihood della sequenza [sequenzaData osservazione].
+    % alla fine scelgo l'osservazione la cui sequenza ha la max likelihood
+
     maxLogPSeq = -Inf;
     mostLikelyObs = NaN;
-    for possibleObs = possibleObservations
-        [~, logPSeq] = hmmdecode([obsSeq, possibleObs], transMatrix, emissMatrix);
+    for possibleObs = possibleObservations      % per ogni possibile osservazione
+        [~, logPSeq] = hmmdecode([obsSeq, possibleObs], transMatrix, emissMatrix);  % come alternativa possiamo mettere obsSeq(2:end), così che la sequenza sia lunga 10
         if (maxLogPSeq < logPSeq)
             maxLogPSeq = logPSeq;
             mostLikelyObs = possibleObs;
