@@ -125,56 +125,6 @@ end
 % end
 
 
-%% simulazione hmmgenerate
-disp("Simulations")
-[sequence, states] = hmmgenerate(length(Date_l), ESTTR, ESTEMIT);
-
-prices = zeros(1,length(sequence));
-prices(1) = Close(llim);
-
-for i = 1:length(sequence)
-    [fCtemp, fHtemp, fLtemp] = map1DTo3D(sequence(i), numberOfPoints(1), numberOfPoints(2),numberOfPoints(3));
-    fC(i) = edgesFChange(fCtemp);
-    fH(i) = edgesFHigh(fHtemp);
-    fL(i) = edgesFLow(fLtemp);
-end
-
-for i = 2:length(sequence)
-    prices(i) = prices(i-1)*(1 - fC(i)); 
-end
-
-figure
-subplot(2,1,1)
-plot(Date_l,Close(llim:ulim));
-grid on
-title('andamento prezzi dati reali')
-subplot(2,1,2)
-plot(Date_l,prices);
-grid on
-title('andamento prezzi simulazione')
-
-figure
-subplot(3,1,1)
-bar(Date_l,continuos_observations3D(:,1))
-title('Frac Change')
-subplot(3,1,2)
-bar(Date_l,continuos_observations3D(:,2))
-title('Frac High')
-subplot(3,1,3)
-bar(Date_l,continuos_observations3D(:,3))
-title('Frac Low')
-
-figure
-subplot(3,1,1)
-bar(Date_l,fC)
-title('Frac C')
-subplot(3,1,2)
-bar(Date_l,fH)
-title('Frac H')
-subplot(3,1,3)
-bar(Date_l,fL)
-title('Frac L')
-
 %% predizione
 disp("Prediction")
 predictionLength = 101;
