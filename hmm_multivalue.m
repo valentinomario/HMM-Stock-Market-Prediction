@@ -2,14 +2,14 @@ close all
 clear
 clc
 
-TRAIN = 0;
+TRAIN = 1;
 
 load AAPL.mat;  % Date Open Close High Low
 
 % TUTTE LE DATE SONO NEL FORMATO MM/DD/YYYY
 % selezioniamo un periodo di osservazione
-llim = indexOfDate(Date,'2003-02-10');
-ulim = indexOfDate(Date,'2004-09-10');
+llim = indexOfDate(Date,'2020-11-02');
+ulim = indexOfDate(Date,'2021-11-02');
 %train_size = 365;
 Date_l = Date(llim:ulim);
 fracChange = (Open(llim:ulim) - Close(llim:ulim))./Open(llim:ulim);
@@ -19,9 +19,13 @@ fracLow    = (Open(llim:ulim) - Low(llim:ulim))  ./Open(llim:ulim);
 continuos_observations3D = [fracChange, fracHigh, fracLow];
 
 numberOfPoints = [50 10 10];
-[fracChange, edgesFChange] = discretize(fracChange, numberOfPoints(1)-1);
-[fracHigh, edgesFHigh]     = discretize(fracHigh, numberOfPoints(2)-1);
-[fracLow, edgesFLow]       = discretize(fracLow, numberOfPoints(3)-1);
+edgesFChange = linspace(-0.1,0.1,numberOfPoints(1)+1);
+edgesFHigh = linspace(0,0.1,numberOfPoints(2)+1);
+edgesFLow = linspace(0,0.1,numberOfPoints(3)+1);
+
+[fracChange, ~] = discretize(fracChange, edgesFChange);
+[fracHigh, ~] = discretize(fracHigh, edgesFHigh);
+[fracLow, ~] = discretize(fracLow, edgesFLow);
 
 observations3D = [fracChange, fracHigh, fracLow];
 
@@ -31,7 +35,7 @@ for i = 1:length(Date_l)
 end
 
 underlyingStates = 4;
-mixturesNumber = 5; % Number of mixture components for each state
+mixturesNumber = 4; % Number of mixture components for each state
 latency = 10; % days aka vectors in sequence
 
 %% Markov Chain guesses
@@ -169,11 +173,14 @@ title('Frac L')
 
 %% predizione
 
-predictionLength = 360;
+predictionLength = 100;
 predObservations3D = zeros(predictionLength, 3);
 predictedClose = zeros(predictionLength,1);
 
 for t = 1:predictionLength
+    if t==355
+        keyboard;
+    end
     disp("Predizione " + t);
 %vecchi estremi del 04/07
 %     llimPred = (ulim - latency + 1 + t);
@@ -251,7 +258,9 @@ fprintf("Total predictions: %d\nCorrect derivative: %d (%.2f%%)\nWrong derivativ
     prediction.good, 100 * prediction.good / (prediction.bad + prediction.good), ...
     prediction.bad, 100 * prediction.bad / (prediction.bad + prediction.good));
 
+% Calcolo MAPE
 
+%MAPE = 1/length(Date_l)*
 
 
 
