@@ -19,13 +19,13 @@ fracLow    = (Open(llim:ulim) - Low(llim:ulim))  ./Open(llim:ulim);
 continuos_observations3D = [fracChange, fracHigh, fracLow];
 
 numberOfPoints = [50 10 10];
-edgesFChange = linspace(-0.1,0.1,numberOfPoints(1));
-edgesFHigh = linspace(0,0.1,numberOfPoints(2));
-edgesFLow = linspace(0,0.1,numberOfPoints(3));
+edgesFChange = linspace(-0.1,0.1,numberOfPoints(1)+1);
+edgesFHigh = linspace(0,0.1,numberOfPoints(2)+1);
+edgesFLow = linspace(0,0.1,numberOfPoints(3)+1);
 
-[fracChange, ~] = discretize(fracChange, edgesFChange+1);
-[fracHigh, ~] = discretize(fracHigh, edgesFHigh+1);
-[fracLow, ~] = discretize(fracLow, edgesFLow+1);
+[fracChange, ~] = discretize(fracChange, edgesFChange,'IncludedEdge','right');
+[fracHigh, ~] = discretize(fracHigh, edgesFHigh,'IncludedEdge','right');
+[fracLow, ~] = discretize(fracLow, edgesFLow,'IncludedEdge','right');
 
 observations3D = [fracChange, fracHigh, fracLow];
 
@@ -57,14 +57,15 @@ for i = 1:underlyingStates
     gm_s{i} = gmdistribution(mu_sorted((1+(i-1)*mixturesNumber):(i*mixturesNumber),:), ...
                              sigma_sorted(1,:,(1+(i-1)*mixturesNumber):(i*mixturesNumber)));
     % TODO delta edges
-    for x=edgesFChange
-        for y=edgesFHigh
-            for z=edgesFLow
+    for x=edgesFChange(1:end-1)
+        for y=edgesFHigh(1:end-1)
+            for z=edgesFLow(1:end-1)
                 p = pdf(gm_s{i},[x y z]);
                    
                 x_d = find(edgesFChange==x);
                 y_d = find(edgesFHigh==y);
                 z_d = find(edgesFLow==z);
+               
                 n = map3DTo1D(x_d,y_d,z_d,numberOfPoints(1),numberOfPoints(2),numberOfPoints(3));
 
                 emissionProbabilities(i,n) = p;
