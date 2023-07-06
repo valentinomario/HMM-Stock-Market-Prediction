@@ -31,7 +31,7 @@ observations3D = [fracChange, fracHigh, fracLow];
 
 observations = zeros(length(Date_l), 1);
 for i = 1:length(Date_l)
-    observations(i) = map3DTo1D(fracChange(i), fracHigh(i), fracLow(i), numberOfPoints(1), numberOfPoints(2));
+    observations(i) = map3DTo1D(fracChange(i), fracHigh(i), fracLow(i), numberOfPoints(1), numberOfPoints(2),numberOfPoints(3));
 end
 
 underlyingStates = 4;
@@ -65,7 +65,7 @@ for i = 1:underlyingStates
                 x_d = find(edgesFChange==x);
                 y_d = find(edgesFHigh==y);
                 z_d = find(edgesFLow==z);
-                n = map3DTo1D(x_d,y_d,z_d,numberOfPoints(1),numberOfPoints(2));
+                n = map3DTo1D(x_d,y_d,z_d,numberOfPoints(1),numberOfPoints(2),numberOfPoints(3));
 
                 emissionProbabilities(i,n) = p;
             end
@@ -129,7 +129,7 @@ prices = zeros(1,length(sequence));
 prices(1) = Close(llim);
 
 for i = 1:length(sequence)
-    [fCtemp, fHtemp, fLtemp] = map1DTo3D(sequence(i), numberOfPoints(1), numberOfPoints(2));
+    [fCtemp, fHtemp, fLtemp] = map1DTo3D(sequence(i), numberOfPoints(1), numberOfPoints(2),numberOfPoints(3));
     fC(i) = edgesFChange(fCtemp);
     fH(i) = edgesFHigh(fHtemp);
     fL(i) = edgesFLow(fLtemp);
@@ -199,12 +199,12 @@ for t = 1:predictionLength
         
     predictionObservations = zeros(1, latency);
     for i = 1:latency
-        predictionObservations(i) = map3DTo1D(predictionFracChange(i), predictionFracHigh(i), predictionFracLow(i), numberOfPoints(1), numberOfPoints(2));
+        predictionObservations(i) = map3DTo1D(predictionFracChange(i), predictionFracHigh(i), predictionFracLow(i), numberOfPoints(1), numberOfPoints(2), numberOfPoints(3));
     end
 
     predictedObs = hmmPredictObservation(predictionObservations, ESTTR, ESTEMIT, 'verbose', 1, 'possibleObservations', 1:5000);
     if (~isnan(predictedObs))
-        [predictedFC, predictedFH, predictedFL] = map1DTo3D(predictedObs, numberOfPoints(1), numberOfPoints(2));
+        [predictedFC, predictedFH, predictedFL] = map1DTo3D(predictedObs, numberOfPoints(1), numberOfPoints(2), numberOfPoints(3));
         predObservations3D(t,:) = [edgesFChange(predictedFC), edgesFHigh(predictedFH), edgesFLow(predictedFL)];
     else
         predObservations3D(t,:) = NaN;
