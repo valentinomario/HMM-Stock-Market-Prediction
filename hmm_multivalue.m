@@ -19,13 +19,13 @@ fracLow    = (Open(llim:ulim) - Low(llim:ulim))  ./Open(llim:ulim);
 continuos_observations3D = [fracChange, fracHigh, fracLow];
 
 numberOfPoints = [50 10 10];
-edgesFChange = linspace(-0.1,0.1,numberOfPoints(1)+1);
-edgesFHigh = linspace(0,0.1,numberOfPoints(2)+1);
-edgesFLow = linspace(0,0.1,numberOfPoints(3)+1);
+edgesFChange = linspace(-0.1,0.1,numberOfPoints(1));
+edgesFHigh = linspace(0,0.1,numberOfPoints(2));
+edgesFLow = linspace(0,0.1,numberOfPoints(3));
 
-[fracChange, ~] = discretize(fracChange, edgesFChange);
-[fracHigh, ~] = discretize(fracHigh, edgesFHigh);
-[fracLow, ~] = discretize(fracLow, edgesFLow);
+[fracChange, ~] = discretize(fracChange, edgesFChange+1);
+[fracHigh, ~] = discretize(fracHigh, edgesFHigh+1);
+[fracLow, ~] = discretize(fracLow, edgesFLow+1);
 
 observations3D = [fracChange, fracHigh, fracLow];
 
