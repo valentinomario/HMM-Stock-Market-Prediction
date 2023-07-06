@@ -48,12 +48,26 @@ else
 
     maxLogPSeq = -Inf;
     mostLikelyObs = NaN;
-    for possibleObs = possibleObservations      % per ogni possibile osservazione
-        [~, logPSeq] = hmmdecode([obsSeq, possibleObs], transMatrix, emissMatrix);  % come alternativa possiamo mettere obsSeq(2:end), così che la sequenza sia lunga 10
-        if (maxLogPSeq < logPSeq)
-            maxLogPSeq = logPSeq;
-            mostLikelyObs = possibleObs;
+    converged = 0;
+    while converged==0
+        for possibleObs = possibleObservations      % per ogni possibile osservazione
+            [~, logPSeq] = hmmdecode([obsSeq, possibleObs], transMatrix, emissMatrix);  % come alternativa possiamo mettere obsSeq(2:end), così che la sequenza sia lunga 10
+            if (maxLogPSeq < logPSeq)
+                maxLogPSeq = logPSeq;
+                mostLikelyObs = possibleObs;
+            end
         end
+
+        if maxLogPSeq == -inf
+            if length(obsSeq)>3
+                obsSeq = obsSeq(2:end);
+            else
+                converged = 1;
+            end
+        else
+            converged = 1;
+        end
+
     end
     predictedObservation = mostLikelyObs;
     if (verbose)
