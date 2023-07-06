@@ -32,3 +32,4 @@ codegen/
 # Octave session info
 octave-workspace
 .MATLABDriveTag
+.DS_Store
