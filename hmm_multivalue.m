@@ -165,7 +165,7 @@ for t = 1:predictionLength
     end
     % !!! prima era Open(ulimPred+t), lucy e ludo credono fosse sbagliato
     if (isnan(predictedObs))
-        predictedClose(t)=0;
+        predictedClose(t) = NaN;
     else
         predictedClose(t) = Open(ulimPred+1) * (1 - predObservations3D(t,1));
     end
@@ -190,7 +190,7 @@ prediction = struct('good', 0, 'bad', 0, 'invalid', 0);
 p2 = gobjects(predictionLength - 1, 1);
 %p2 = plot(Date(ulim +1 : lastPredDate), predictedClose);
 for i=1:predictionLength %- 1   % ho tolto il -1 perchè non mi trovavo -L
-    if (predictedClose(i) ~= 0)     % se è riuscito a fare una previsione
+    if (~isnan(predictedClose(i)))     % se è riuscito a fare una previsione
         p2(i) = plot(Date(ulim + i - 1 : ulim + i), [Close(ulim + i -1), predictedClose(i)]);
         if (sign(predictedClose(i) - Close(ulim + i - 1)) == sign(Close(ulim + i) - Close(ulim + i - 1)))
             % se il segno della derivata è corretto
