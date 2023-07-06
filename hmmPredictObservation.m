@@ -55,6 +55,7 @@ else
     if dynamicWindow
         converged = 0;
     else
+        % se non è settato dynamicWindow skippo il ciclo while di convergenza
         converged = 1;
     end
     
