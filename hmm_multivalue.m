@@ -279,6 +279,8 @@ MAPE = MAPE / (prediction.bad + prediction.good);
 fprintf("Mean Absolute Percentage Error (MAPE): %.2f%%\n", MAPE*100);
 
 
-
-
-
+figure(Name="Grafico marketing")
+plot(Date(ulim+1:ulim+predictionLength),Close(ulim+1:ulim+predictionLength),'Marker','.');
+hold on
+plot(Date(ulim+1:ulim+predictionLength),predictedClose,'Color','red','Marker','.')
+grid
