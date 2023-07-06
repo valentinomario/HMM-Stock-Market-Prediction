@@ -2,7 +2,7 @@ close all
 clear
 clc
 
-TRAIN = 1;
+TRAIN = 0;
 
 load AAPL.mat;  % Date Open Close High Low
 
@@ -111,7 +111,7 @@ if (TRAIN)
     end
     save(strcat("hmmtrain-", string(datetime('now', 'format', 'yyyy-MM-dd-HH-mm-ss')), ".mat"), "ESTTR", "ESTEMIT","trainInfo");
 else
-    load("hmmtrain converged.mat");
+    load("hmmtrain-2023-07-06-13-18-13.mat");
 end
 
 % ESTTR   = transitionMatrix;
@@ -203,14 +203,14 @@ for t = 1:predictionLength
     end
 
     predictedObs = hmmPredictObservation(predictionObservations, ESTTR, ESTEMIT, 'verbose', 1, 'possibleObservations', 1:5000);
-    if(~isnan(predictedObs))
+    if (~isnan(predictedObs))
         [predictedFC, predictedFH, predictedFL] = map1DTo3D(predictedObs, numberOfPoints(1), numberOfPoints(2));
         predObservations3D(t,:) = [edgesFChange(predictedFC), edgesFHigh(predictedFH), edgesFLow(predictedFL)];
     else
         predObservations3D(t,:) = NaN;
     end
     % !!! prima era Open(ulimPred+t), lucy e ludo credono fosse sbagliato
-    if(isnan(predictedObs))
+    if (isnan(predictedObs))
         predictedClose(t)=0;
     else
         predictedClose(t) = Open(ulimPred+1) * (1 - predObservations3D(t,1));
@@ -221,6 +221,9 @@ end
 
 lastPredDate = (ulim  + predictionLength);
 
+% inizializzo MAPE (solo perchè non posso calcolarlo fuori dal for
+MAPE = 0;
+
 figure(Name='Real vs predicted data')
 p1 = plot(Date(llim : lastPredDate), Close(llim:lastPredDate));
 grid on
@@ -229,39 +232,46 @@ p1.LineWidth = 0.3;
 p1.Marker = '.';
 p1.MarkerSize = 5;
 
-prediction = struct('good', 0, 'bad', 0);
+prediction = struct('good', 0, 'bad', 0, 'invalid', 0);
 p2 = gobjects(predictionLength - 1, 1);
 %p2 = plot(Date(ulim +1 : lastPredDate), predictedClose);
-for i=1:predictionLength - 1
-    if (predictedClose(i) ~= 0)
+for i=1:predictionLength %- 1   % ho tolto il -1 perchè non mi trovavo -L
+    if (predictedClose(i) ~= 0)     % se è riuscito a fare una previsione
         p2(i) = plot(Date(ulim + i - 1 : ulim + i), [Close(ulim + i -1), predictedClose(i)]);
         if (sign(predictedClose(i) - Close(ulim + i - 1)) == sign(Close(ulim + i) - Close(ulim + i - 1)))
+            % se il segno della derivata è corretto
             p2(i).Color = 'g';
             prediction.good = prediction.good + 1;
-        else
+        else    % il segno della derivata è sbagliato :(
             p2(i).Color='r';
             prediction.bad = prediction.bad + 1;
         end
         p2(i).LineWidth = 0.3;
         p2(i).Marker = '.';
         p2(i).MarkerSize = 5;
+
+        % la predizione è corretta -> MAPE
+        MAPE = MAPE + abs((Close(ulim + i) - predictedClose(i))/Close(ulim + i));
+    else
+        % incremento il conteggio di predizioni non valide
+        prediction.invalid = prediction.invalid + 1;
     end
 end
-% p2.Color='r';
-% p2.LineWidth = 0.3;
-% p2.Marker = '.';
-% p2.MarkerSize = 5;
+
 title('andamento prezzi dati reali vs predizione')
 
+% Stampo riepilogo
 fprintf("Total predictions: %d\nCorrect derivative: %d (%.2f%%)\nWrong derivative: %d (%.2f%%)\n", ...
     prediction.bad + prediction.good, ...
     prediction.good, 100 * prediction.good / (prediction.bad + prediction.good), ...
     prediction.bad, 100 * prediction.bad / (prediction.bad + prediction.good));
 
 % Calcolo MAPE
-
-%MAPE = 1/length(Date_l)*
-
+MAPE = MAPE / (prediction.bad + prediction.good);
+% quando tutte le predictedClose saranno diverse da zero, posso calcolare
+% il MAPE fuori dal loop così:
+% MAPE = 1/(predictionLength - 1) * sum(abs(Close(ulim+1:ulim+predictionLength) - predictedClose(1:predictionLength)) ./ abs(Close(ulim+1:ulim+predictionLength)), 'all');
+fprintf("Mean Absolute Percentage Error (MAPE): %.2f%%\n", MAPE*100);
 
 
 
