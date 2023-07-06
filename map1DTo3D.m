@@ -1,4 +1,4 @@
-function [x, y, z] = map1DTo3D(n, maxX, maxY)
+function [x, y, z] = map1DTo3D(n, maxX, maxY,maxZ)
 % map1DTo3D: Effettua la mappatura inversa, convertendo un intero n nella tripla (x, y, z) corrispondente nello spazio tridimensionale.
 %
 % Uso:
@@ -15,7 +15,11 @@ function [x, y, z] = map1DTo3D(n, maxX, maxY)
 %   - z: La coordinata z corrispondente all'indice 1D nello spazio tridimensionale.
 %
     % Calcola le coordinate (x, y, z) corrispondenti all'indice 1D n
-    z = floor((n-1) / (maxX*maxY)) + 1;
-    y = floor(((n-1) - (z-1)*(maxX*maxY)) / maxX) + 1;
-    x = mod(((n-1) - (z-1)*(maxX*maxY)), maxX) + 1;
+    if  n>(maxZ-1)*(maxX*maxY) + (maxY-1)*maxX + maxX;
+         n=(maxZ-1)*(maxX*maxY) + (maxY-1)*maxX + maxX;
+    else 
+        z = floor((n-1) / (maxX*maxY)) + 1;
+        y = floor(((n-1) - (z-1)*(maxX*maxY)) / maxX) + 1;
+        x = mod(((n-1) - (z-1)*(maxX*maxY)), maxX) + 1;
+    end 
 end
