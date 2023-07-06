@@ -2,14 +2,16 @@ close all
 clear
 clc
 
+disp("Init");
+
 TRAIN = 0;
 
 load AAPL.mat;  % Date Open Close High Low
 
 % TUTTE LE DATE SONO NEL FORMATO MM/DD/YYYY
 % selezioniamo un periodo di osservazione
-llim = indexOfDate(Date,'2020-11-02');
-ulim = indexOfDate(Date,'2021-11-02');
+llim = indexOfDate(Date,'2022-01-03');
+ulim = indexOfDate(Date,'2023-01-03');
 %train_size = 365;
 Date_l = Date(llim:ulim);
 fracChange = (Open(llim:ulim) - Close(llim:ulim))./Open(llim:ulim);
@@ -39,6 +41,7 @@ mixturesNumber = 4; % Number of mixture components for each state
 latency = 10; % days aka vectors in sequence
 
 %% Markov Chain guesses
+disp("Markov Chain guesses")
 initialProb = 1/underlyingStates.*ones(1, underlyingStates); % initial probabilities of the states
 transitionMatrix = 1/underlyingStates.*ones(underlyingStates, underlyingStates); % transition matrix
 
@@ -53,10 +56,10 @@ mu_sorted(:,2:3) = gm3D.mu(mu_index,2:3);
 sigma_sorted = gm3D.Sigma(1, 1:3, mu_index);
 
 emissionProbabilities = zeros(underlyingStates,5000);
+gm_s = cell(underlyingStates, 1);
 for i = 1:underlyingStates
     gm_s{i} = gmdistribution(mu_sorted((1+(i-1)*mixturesNumber):(i*mixturesNumber),:), ...
                              sigma_sorted(1,:,(1+(i-1)*mixturesNumber):(i*mixturesNumber)));
-    % TODO delta edges
     for x=edgesFChange(1:end-1)
         for y=edgesFHigh(1:end-1)
             for z=edgesFLow(1:end-1)
@@ -95,7 +98,7 @@ end
 % end
 
 %% train
-
+disp("Train")
 if (TRAIN)
     maxIter = 500;      %#ok<UNRCH> 
     trainInfo = struct('maxIter', maxIter, 'converged', 0, 'trainingTime', -1);
@@ -123,7 +126,7 @@ end
 
 
 %% simulazione hmmgenerate
-
+disp("Simulations")
 [sequence, states] = hmmgenerate(length(Date_l), ESTTR, ESTEMIT);
 
 prices = zeros(1,length(sequence));
@@ -173,8 +176,8 @@ bar(Date_l,fL)
 title('Frac L')
 
 %% predizione
-
-predictionLength = 100;
+disp("Prediction")
+predictionLength = 101;
 predObservations3D = zeros(predictionLength, 3);
 predictedClose = zeros(predictionLength,1);
 
@@ -182,7 +185,7 @@ for t = 1:predictionLength
     if t==355
         keyboard;
     end
-    disp("Predizione " + t);
+    %disp("Predizione " + t);
 %vecchi estremi del 04/07
 %     llimPred = (ulim - latency + 1 + t);
 %     ulimPred = (ulim + t);
@@ -219,7 +222,7 @@ for t = 1:predictionLength
 end
 
 %% grafici
-
+disp("Plots")
 lastPredDate = (ulim  + predictionLength);
 
 % inizializzo MAPE (solo perchè non posso calcolarlo fuori dal for
@@ -262,7 +265,8 @@ end
 title('andamento prezzi dati reali vs predizione')
 
 % Stampo riepilogo
-fprintf("Total predictions: %d ($.2f%%)\nCorrect derivative: %d (%.2f%%)\nWrong derivative: %d (%.2f%%)\n", ...
+disp("------------------------------")
+fprintf("Total predictions: %d (%.2f%%)\nCorrect derivative: %d (%.2f%%)\nWrong derivative: %d (%.2f%%)\n", ...
     prediction.bad + prediction.good, 100*(prediction.bad + prediction.good)/predictionLength, ...
     prediction.good, 100 * prediction.good / (prediction.bad + prediction.good), ...
     prediction.bad, 100 * prediction.bad / (prediction.bad + prediction.good));
