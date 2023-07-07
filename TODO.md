@@ -1,5 +1,5 @@
 ### TODO
-- [ ] Paper: suddivisione 
+- [X] Paper: suddivisione 
 - [ ] Presentazione : suddivisione
 - [ ] Train e grafici 
 - [ ] Pulizia codice
