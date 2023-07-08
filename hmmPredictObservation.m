@@ -1,20 +1,21 @@
 function predictedObservation = hmmPredictObservation(obsSeq, transMatrix, emissMatrix, varargin)
-% hmmPredictObservation: Predice l'osservazione successiva in un modello di Markov a stati nascosti (HMM).
-%
-% Uso:
+% hmmPredictObservation: Predicts the next observation in a Hidden Markov Model (HMM).
+
+% Usage:
 %   predictedObservation = hmmPredictObservation(obsSeq, transMatrix, emissMatrix, varargin)
-%
+
 % Input:
-%   - obsSeq: La sequenza di osservazioni per cui si vuole predire l'osservazione successiva.
-%   - transMatrix: La matrice di transizione che rappresenta le probabilità di transizione tra gli stati del modello HMM.
-%   - emissMatrix: La matrice di emissione che rappresenta le probabilità di emissione delle diverse osservazioni per ogni stato del modello HMM.
-%   - varargin: Coppie di parametri opzionali (nome, valore) per configurare il comportamento della funzione.
-%       - 'verbose': Un flag opzionale per abilitare la stampa di informazioni dettagliate. Valore predefinito: 0 (disabilitato).
-%       - 'possibleObservations': Un vettore delle possibili osservazioni per la predizione dell'osservazione successiva.
-%
+% - obsSeq: The sequence of observations for which the next observation is to be predicted.
+% - transMatrix: The transition matrix representing the transition probabilities between the states of the HMM model.
+% - emissMatrix: The emission matrix representing the probabilities of emitting different observations for each state of the HMM model.
+% - varargin: Optional parameter-value pairs to configure the behavior of the function.
+%   - 'verbose': An optional flag to enable verbose information printing. Default: 0 (disabled).
+%   - 'possibleObservations': A vector of possible observations for predicting the next observation.
+%   - 'dynamicWindow': An optional flag to enable dynamic windowing for convergence. Default: 1 (enabled).
+
 % Output:
-%   - predictedObservation: L'osservazione predetta come successiva nella sequenza.
-%
+% - predictedObservation: The predicted observation as the next one in the sequence.
+
 p = inputParser;
 addParameter(p, 'verbose', 0)
 addParameter(p, 'possibleObservations', [])
@@ -26,28 +27,27 @@ possibleObservations = p.Results.possibleObservations;
 dynamicWindow = p.Results.dynamicWindow;
 
 if isempty(possibleObservations)
-    % Se non sono specificate possibili osservazioni, esegui la predizione
-    % utilizzando l'approccio standard: cerco di tradurre la sequenza di
-    % osservazioni in una sequenza di stati, valuto la probabilità per
-    % ognuno dei possibili prossimi stati, prendo l'emissione con massima
-    % probabilità
+    % If no possible observations are specified, predict using the standard approach:
+    %  - Estimate a sequence of states from observation sequence
+    %  - Evaluate the probabilities for each of possible next state
+    %  - Evaluate the probabilities for each of possible emissions, given each
+    %    possible transition (given nextStateP)
+    %  - Choose the emission with the highest probability.
 
     [states, logPSeq] = hmmdecode(obsSeq, transMatrix, emissMatrix);
-    
     lastStateP = states(:,end);
-    % Calcolo delle probabilità per ogni possibile prossimo stato
-    nextStateP = transMatrix' * lastStateP; % è una colonna 
-    % Calcolo delle probabilità per ogni possibile emissione
-    nextObsP = emissMatrix' * nextStateP;   % ancora una colonna
-    % Scelgo l'emissione con massima probabilità
+    nextStateP = transMatrix' * lastStateP;   % column
+    nextObsP   = emissMatrix' * nextStateP;   % column
     [pObs, predictedObservation] = max(nextObsP);
+
     if (verbose)
-        fprintf("Logaritmo probabilita' sequenza: %1$.4f\nProbabilita' osservazione: %2$.4f", logPSeq, pObs);
+        fprintf("Log probability of sequence: %1$.4f\nProbabilita' osservazione: %2$.4f", logPSeq, pObs);
     end
 else
-    % avendo a disposizione il (sub)set delle possibili osservazioni,
-    % calcolo la likelihood della sequenza [sequenzaData osservazione].
-    % alla fine scelgo l'osservazione la cui sequenza ha la max likelihood
+
+    % If a (sub)set of possible observations is available:
+    %  - Calculate the likelihood of the sequence logPSeq using hmmdecode.
+    %  - Finally, choose the observation whose sequence has the maximum likelihood.
 
     maxLogPSeq = -Inf;
     mostLikelyObs = NaN;
@@ -55,38 +55,35 @@ else
     if dynamicWindow
         converged = 0;
     else
-        % se non è settato dynamicWindow skippo il ciclo while di convergenza
+        % if dynamicWindow is set to 0, skip the while loop for convergence
         converged = 1;
     end
     
     while converged == 0
-        for possibleObs = possibleObservations      % per ogni possibile osservazione
-            [~, logPSeq] = hmmdecode([obsSeq, possibleObs], transMatrix, emissMatrix);  % come alternativa possiamo mettere obsSeq(2:end), così che la sequenza sia lunga 10
+        for possibleObs = possibleObservations     % For each possible observation
+            [~, logPSeq] = hmmdecode([obsSeq, possibleObs], transMatrix, emissMatrix); 
+            % come alternativa possiamo mettere obsSeq(2:end), così che la sequenza sia lunga 10
             if (maxLogPSeq < logPSeq)
+                % update maximum likelihood and most likely observation
                 maxLogPSeq = logPSeq;
                 mostLikelyObs = possibleObs;
             end
         end
 
         if ((maxLogPSeq == -inf) && (length(obsSeq) > 3))
-            % se non è riuscito ad arrivare a convergenza
-            % taglio il primo valore della sequenza
-            % e riprovo l'hmmdecode
+            % If convergence is not reached, 
+            % Remove the first value from the sequence and try hmmdecode
+            % again
             obsSeq = obsSeq(2:end);
         else
             converged = 1;
         end
+
     end
+
     predictedObservation = mostLikelyObs;
     if (verbose)
-        fprintf("Logaritmo probabilita' sequenza: %1$.4f\n", maxLogPSeq);
+        fprintf("Log probability of sequence: %1$.4f\n", maxLogPSeq);
     end
+
 end
-
-
-
-
-
-
-
-
