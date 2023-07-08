@@ -30,7 +30,7 @@ fracChange = (Open(llim:ulim) - Close(llim:ulim))./Open(llim:ulim);
 fracHigh   = (High(llim:ulim) - Close(llim:ulim))./Open(llim:ulim);
 fracLow    = (Open(llim:ulim) - Low(llim:ulim))  ./Open(llim:ulim);
 % sequences of observations grouped in a three columns matrix
-continuos_observations3D = [fracChange, fracHigh, fracLow];
+continuous_observations3D = [fracChange, fracHigh, fracLow];
 
 % uniform intervals to discretize observed parameters
 numberOfPoints = [50 10 10];
