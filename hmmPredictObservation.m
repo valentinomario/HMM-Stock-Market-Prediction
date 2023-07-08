@@ -55,7 +55,7 @@ else
     if dynamicWindow
         numTrials = length(obsSeq)-3;
     else
-        % if dynamicWindow is set to 0, skip the while loop for convergence
+        % if dynamicWindow is set to 0, skip the 'for' loop for convergence
         numTrials = 1;
     end
     

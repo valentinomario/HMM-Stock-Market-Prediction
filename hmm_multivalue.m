@@ -27,7 +27,7 @@ Date_l = Date(llim:ulim);      % indexes to easily access loaded data
 
 % sequences of observations of three different parameters
 fracChange = (Open(llim:ulim) - Close(llim:ulim))./Open(llim:ulim);
-fracHigh   = (High(llim:ulim) - Close(llim:ulim))./Open(llim:ulim);
+fracHigh   = (High(llim:ulim) - Open(llim:ulim)) ./Open(llim:ulim);
 fracLow    = (Open(llim:ulim) - Low(llim:ulim))  ./Open(llim:ulim);
 % sequences of observations grouped in a three columns matrix
 continuous_observations3D = [fracChange, fracHigh, fracLow];
