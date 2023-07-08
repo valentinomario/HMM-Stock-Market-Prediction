@@ -3,18 +3,27 @@ clear
 clc
 
 disp("Init");
-
-TRAIN = 0;      % see train section: if 0 a specified .mat file is loaded
-                %                    if 1 a new training is done 
-
 load AAPL.mat;  % Date Open Close High Low
 
-% period of observation is selected 
-% date format MM/DD/YYYY
+TRAIN = 0;      % see train section: if 0 a specified .mat file is loaded
+                %                    if 1 a new training is done
+
+shiftByOne = 1; % see sequences train section: if 0 a new sequence is grouped every #days = latency
+                %                              if 1 a new sequence is grouped every day
+
+% select period of observation, date format MM/DD/YYYY
 llim = indexOfDate(Date,'2020-07-15');
 ulim = indexOfDate(Date,'2021-07-15');
-% indexes to easily access loaded data
-Date_l = Date(llim:ulim);
+
+startPred = indexOfDate(Date,'2022-01-03'); % first day of prediction
+lastDate  = indexOfDate(Date, Date(end));   % last avaiable date
+predictionLength = 101;                     % how many days of prediction starting from startPred
+                                            % must not exceed (lastDate-startPred)                                           
+if ((startPred+predictionLength)>lastDate) 
+        error('Wrong interval');
+end
+
+Date_l = Date(llim:ulim);      % indexes to easily access loaded data
 
 % sequences of observations of three different parameters
 fracChange = (Open(llim:ulim) - Close(llim:ulim))./Open(llim:ulim);
@@ -71,53 +80,58 @@ gm_s = cell(underlyingStates, 1); % _s as state
 for i = 1:underlyingStates
     gm_s{i} = gmdistribution(mu_sorted((1+(i-1)*mixturesNumber):(i*mixturesNumber),:), ...
                              sigma_sorted(1,:,(1+(i-1)*mixturesNumber):(i*mixturesNumber)));
-    % mapping 3D indexes into 1D totalPoints
+    
     for x=edgesFChange(1:end-1)
         for y=edgesFHigh(1:end-1)
             for z=edgesFLow(1:end-1)
+
+                % probability of state i emitting observation [x,y,z]
                 p = pdf(gm_s{i},[x y z]);
-                   
+                % 3D indexes for observation [x,y,z]
                 x_d = find(edgesFChange==x);
                 y_d = find(edgesFHigh==y);
                 z_d = find(edgesFLow==z);
-               
+                % mapping 3D indexes into 1D indexcontinuous_observations3D n
                 n = map3DTo1D(x_d,y_d,z_d,numberOfPoints(1),numberOfPoints(2),numberOfPoints(3));
-
+                % (i,n) element filled: i = state i, n = 1D emission index 
                 emissionProbabilities(i,n) = p;
             end
         end
     end
+    % scaled probabilities of state i emitting each of total #observations = totalPoints
     emissionProbabilities(i,:) = emissionProbabilities(i,:)./sum(emissionProbabilities(i,:));
 end
 
-%% finestra
-%observations_train = convertVectorToCellArray(observations', latency);
+%% train sequences
+% construction of matrix observations_train containing train sequences of
+% discretized monodimensional values
 
-% finestra traslata di 1
-
-observations_train = zeros(length(Date_l)-latency,latency);
-for i=1:(length(Date_l)-latency)
-    observations_train(i,:) = observations(i:(i+latency-1));
+if (shiftByOne) % interval shifted by #days = 1
+    observations_train = zeros(length(Date_l)-latency,latency);
+    for i=1:(length(Date_l)-latency)
+        observations_train(i,:) = observations(i:(i+latency-1));
+    end
+else            % interval shifted by #days = latency
+    observations_train = zeros(ceil(length(Date_l) / latency),latency); %#ok<UNRCH>
+    for i=1:ceil(length(Date_l) / latency)
+       startIndex = (i - 1) * latency + 1;
+       endIndex = min(startIndex + latency - 1, length(Date_l));
+       observations_train(i,:) = observations(startIndex:endIndex);
+    end
 end
-
-% finestra traslata di 10
-
-% observations_train = zeros(ceil(length(Date_l) / latency),latency);
-% for i=1:ceil(length(Date_l) / latency)
-%    startIndex = (i - 1) * latency + 1;
-%    endIndex = min(startIndex + latency - 1, length(Date_l));
-%    observations_train(i,:) = observations(startIndex:endIndex);
-% end
 
 %% train
 disp("Train")
 if (TRAIN)
-    maxIter = 500;      %#ok<UNRCH> 
+    maxIter = 500;      %#ok<UNRCH>
     trainInfo = struct('maxIter', maxIter, 'converged', 0, 'trainingTime', -1);
     lastwarn('', '');
-    tic     % start cronometro
+
+    % construction of transition and emission matrixes
+    tic                             % start stopwatch
     [ESTTR,ESTEMIT] = hmmtrain(observations_train, transitionMatrix, emissionProbabilities,'Verbose',true,'Maxiterations', maxIter);
-    trainInfo.trainingTime = toc;   % fine cronometro
+    trainInfo.trainingTime = toc;   % stop
+
     [warnMsg, warnId] = lastwarn();
     if(isempty(warnId))
         trainInfo.converged = 1;
@@ -130,56 +144,45 @@ else
     load("hmmtrain-2023-07-06-13-18-13.mat");
 end
 
-% ESTTR   = transitionMatrix;
-% ESTEMIT = emissionProbabilities;
-% for i=1:(length(Date_l)-latency)
-%     [ESTTR,ESTEMIT] = hmmtrain(observations(i:(i+latency)), ESTTR, ESTEMIT,'Verbose',true);
-% end
-
-
 %% predizione
 disp("Prediction")
-predictionLength = 101;
+% initialization of 3D predicted observations
 predObservations3D = zeros(predictionLength, 3);
-predictedClose = zeros(predictionLength,1);
+% initialization of Close values based on predicted data 
+predictedClose     = zeros(predictionLength, 1);
 
 for t = 1:predictionLength
-    if t==355
-        keyboard;
-    end
     %disp("Predizione " + t);
-%vecchi estremi del 04/07
-%     llimPred = (ulim - latency + 1 + t);
-%     ulimPred = (ulim + t);
-    startPred = indexOfDate(Date,'2022-01-03');
-
     llimPred = (startPred - latency + t);    
     ulimPred = (startPred + t -1);           
 
     predictionFracChange = (Open(llimPred:ulimPred) - Close(llimPred:ulimPred))./Open(llimPred:ulimPred);
     predictionFracHigh   = (High(llimPred:ulimPred) - Close(llimPred:ulimPred))./Open(llimPred:ulimPred);
     predictionFracLow    = (Open(llimPred:ulimPred) - Low(llimPred:ulimPred))  ./Open(llimPred:ulimPred);
-        
+    %discretization of data during current observation interval    
     predictionFracChange = discretize(predictionFracChange, edgesFChange);
     predictionFracHigh   = discretize(predictionFracHigh, edgesFHigh);
     predictionFracLow    = discretize(predictionFracLow, edgesFLow);
-        
+    % initialization of 1D mapped discretized data
     predictionObservations = zeros(1, latency);
     for i = 1:latency
         predictionObservations(i) = map3DTo1D(predictionFracChange(i), predictionFracHigh(i), predictionFracLow(i), numberOfPoints(1), numberOfPoints(2), numberOfPoints(3));
     end
-
+    %prediction
     predictedObs = hmmPredictObservation(predictionObservations, ESTTR, ESTEMIT, 'verbose', 1, 'possibleObservations', 1:5000);
+    
     if (~isnan(predictedObs))
+        % 3D mapping of current valid prediction
         [predictedFC, predictedFH, predictedFL] = map1DTo3D(predictedObs, numberOfPoints(1), numberOfPoints(2), numberOfPoints(3));
+        % t-th row filled with current 3D valid prediction
         predObservations3D(t,:) = [edgesFChange(predictedFC), edgesFHigh(predictedFH), edgesFLow(predictedFL)];
-    else
-        predObservations3D(t,:) = NaN;
+    else 
+        predObservations3D(t,:) = NaN;  % invalid prediction
     end
-    % !!! prima era Open(ulimPred+t), lucy e ludo credono fosse sbagliato
-    if (isnan(predictedObs))
-        predictedClose(t) = NaN;
-    else
+    
+    if (isnan(predictedObs))    % invalide prediction corresponds to invalid value for Close
+        predictedClose(t) = NaN;    
+    else                        % t-th element filled with Close value based on predicted fractional change
         predictedClose(t) = Open(ulimPred+1) * (1 - predObservations3D(t,1));
     end
 end
@@ -188,7 +191,7 @@ end
 disp("Plots")
 lastPredDate = (startPred  + predictionLength);
 
-% inizializzo MAPE (solo perchè non posso calcolarlo fuori dal for
+% initialization of MAPE 
 MAPE = 0;
 
 figure(Name='Real vs predicted data')
