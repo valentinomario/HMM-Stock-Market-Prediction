@@ -7,3 +7,4 @@
 - [ ] Pulizia codice
     - [X] Cancellare simulazione
 - [ ] Train con diverso numero di stati
+- [ ] Correggere caso dynamicWindow = 0
