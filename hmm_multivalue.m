@@ -169,7 +169,7 @@ for t = 1:predictionLength
         predictionObservations(i) = map3DTo1D(predictionFracChange(i), predictionFracHigh(i), predictionFracLow(i), numberOfPoints(1), numberOfPoints(2), numberOfPoints(3));
     end
     %prediction
-    predictedObs = hmmPredictObservation(predictionObservations, ESTTR, ESTEMIT, 'verbose', 1, 'possibleObservations', 1:5000);
+    predictedObs = hmmPredictObservation(predictionObservations, ESTTR, ESTEMIT, 'verbose', 1, 'possibleObservations', 1:totalPoints);
     
     if (~isnan(predictedObs))
         % 3D mapping of current valid prediction
