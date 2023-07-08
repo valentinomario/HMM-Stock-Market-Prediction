@@ -4,62 +4,74 @@ clc
 
 disp("Init");
 
-TRAIN = 1;
+TRAIN = 0;      % see train section: if 0 a specified .mat file is loaded
+                %                    if 1 a new training is done 
 
 load AAPL.mat;  % Date Open Close High Low
 
-% TUTTE LE DATE SONO NEL FORMATO MM/DD/YYYY
-% selezioniamo un periodo di osservazione
+% period of observation is selected 
+% date format MM/DD/YYYY
 llim = indexOfDate(Date,'2020-07-15');
 ulim = indexOfDate(Date,'2021-07-15');
-%train_size = 365;
+% indexes to easily access loaded data
 Date_l = Date(llim:ulim);
+
+% sequences of observations of three different parameters
 fracChange = (Open(llim:ulim) - Close(llim:ulim))./Open(llim:ulim);
 fracHigh   = (High(llim:ulim) - Close(llim:ulim))./Open(llim:ulim);
 fracLow    = (Open(llim:ulim) - Low(llim:ulim))  ./Open(llim:ulim);
-
+% sequences of observations grouped in a three columns matrix
 continuos_observations3D = [fracChange, fracHigh, fracLow];
 
+% uniform intervals to discretize observed parameters
 numberOfPoints = [50 10 10];
 edgesFChange = linspace(-0.1,0.1,numberOfPoints(1)+1);
 edgesFHigh = linspace(0,0.1,numberOfPoints(2)+1);
 edgesFLow = linspace(0,0.1,numberOfPoints(3)+1);
-
+% discretization of each parameter sequence (overscribed)
 [fracChange, ~] = discretize(fracChange, edgesFChange,'IncludedEdge','right');
-[fracHigh, ~] = discretize(fracHigh, edgesFHigh,'IncludedEdge','right');
-[fracLow, ~] = discretize(fracLow, edgesFLow,'IncludedEdge','right');
+[fracHigh,   ~] = discretize(fracHigh, edgesFHigh,'IncludedEdge','right');
+[fracLow,    ~] = discretize(fracLow, edgesFLow,'IncludedEdge','right');
 
-observations3D = [fracChange, fracHigh, fracLow];
+% discretized sequences of observations grouped in a three columns matrix
+% observations3D = [fracChange, fracHigh, fracLow];
 
+% discretized sequences mapped into a monodimensional array
 observations = zeros(length(Date_l), 1);
 for i = 1:length(Date_l)
     observations(i) = map3DTo1D(fracChange(i), fracHigh(i), fracLow(i), numberOfPoints(1), numberOfPoints(2),numberOfPoints(3));
 end
 
-underlyingStates = 4;
-mixturesNumber = 4; % Number of mixture components for each state
-latency = 10; % days aka vectors in sequence
+underlyingStates = 4; % number of hidden states
+mixturesNumber = 4;   % number of mixture components for each state
+latency = 10;         % days aka vectors in sequence
 
 %% Markov Chain guesses
 disp("Markov Chain guesses")
-initialProb = 1/underlyingStates.*ones(1, underlyingStates); % initial probabilities of the states
-transitionMatrix = 1/underlyingStates.*ones(underlyingStates, underlyingStates); % transition matrix
+% initialProb = 1/underlyingStates.*ones(1, underlyingStates); % initial probabilities of the states
 
-gm3D = fitgmdist(continuos_observations3D, mixturesNumber*underlyingStates, 'CovarianceType', 'diagonal', 'RegularizationValue', 1e-10, 'Replicates', 10);
+% transition matrix initialized assuming uniform distribution of probabilities 
+transitionMatrix = 1/underlyingStates.*ones(underlyingStates, underlyingStates);
+% Gaussian Mixture Models fitting
+gm3D = fitgmdist(continuous_observations3D, mixturesNumber*underlyingStates, 'CovarianceType', 'diagonal', 'RegularizationValue', 1e-10, 'Replicates', 10);
 
 % mu sorting
 mu_sorted = zeros(mixturesNumber*underlyingStates,3);
 [mu_sorted(:,1), mu_index] = sort(gm3D.mu(:,1), 1);
 mu_sorted(:,2:3) = gm3D.mu(mu_index,2:3);
-
 % sigma sorting
 sigma_sorted = gm3D.Sigma(1, 1:3, mu_index);
 
-emissionProbabilities = zeros(underlyingStates,5000);
-gm_s = cell(underlyingStates, 1);
+% emission probabilities initialized to zeros
+totalPoints = numberOfPoints(1)*numberOfPoints(2)*numberOfPoints(3);
+emissionProbabilities = zeros(underlyingStates,totalPoints);
+
+% Gaussian Mixture Model for each hidden state
+gm_s = cell(underlyingStates, 1); % _s as state
 for i = 1:underlyingStates
     gm_s{i} = gmdistribution(mu_sorted((1+(i-1)*mixturesNumber):(i*mixturesNumber),:), ...
                              sigma_sorted(1,:,(1+(i-1)*mixturesNumber):(i*mixturesNumber)));
+    % mapping 3D indexes into 1D totalPoints
     for x=edgesFChange(1:end-1)
         for y=edgesFHigh(1:end-1)
             for z=edgesFLow(1:end-1)
