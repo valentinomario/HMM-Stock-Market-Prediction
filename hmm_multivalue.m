@@ -4,14 +4,14 @@ clc
 
 disp("Init");
 
-TRAIN = 0;
+TRAIN = 1;
 
 load AAPL.mat;  % Date Open Close High Low
 
 % TUTTE LE DATE SONO NEL FORMATO MM/DD/YYYY
 % selezioniamo un periodo di osservazione
-llim = indexOfDate(Date,'2022-01-03');
-ulim = indexOfDate(Date,'2023-01-03');
+llim = indexOfDate(Date,'2020-07-15');
+ulim = indexOfDate(Date,'2021-07-15');
 %train_size = 365;
 Date_l = Date(llim:ulim);
 fracChange = (Open(llim:ulim) - Close(llim:ulim))./Open(llim:ulim);
@@ -139,9 +139,10 @@ for t = 1:predictionLength
 %vecchi estremi del 04/07
 %     llimPred = (ulim - latency + 1 + t);
 %     ulimPred = (ulim + t);
+    startPred = indexOfDate(Date,'2022-01-03');
 
-    llimPred = (ulim - latency + t);    
-    ulimPred = (ulim + t -1);           
+    llimPred = (startPred - latency + t);    
+    ulimPred = (startPred + t -1);           
 
     predictionFracChange = (Open(llimPred:ulimPred) - Close(llimPred:ulimPred))./Open(llimPred:ulimPred);
     predictionFracHigh   = (High(llimPred:ulimPred) - Close(llimPred:ulimPred))./Open(llimPred:ulimPred);
@@ -173,7 +174,7 @@ end
 
 %% grafici
 disp("Plots")
-lastPredDate = (ulim  + predictionLength);
+lastPredDate = (startPred  + predictionLength);
 
 % inizializzo MAPE (solo perchè non posso calcolarlo fuori dal for
 MAPE = 0;
@@ -191,8 +192,8 @@ p2 = gobjects(predictionLength - 1, 1);
 %p2 = plot(Date(ulim +1 : lastPredDate), predictedClose);
 for i=1:predictionLength %- 1   % ho tolto il -1 perchè non mi trovavo -L
     if (~isnan(predictedClose(i)))     % se è riuscito a fare una previsione
-        p2(i) = plot(Date(ulim + i - 1 : ulim + i), [Close(ulim + i -1), predictedClose(i)]);
-        if (sign(predictedClose(i) - Close(ulim + i - 1)) == sign(Close(ulim + i) - Close(ulim + i - 1)))
+        p2(i) = plot(Date(startPred + i - 1 : startPred + i), [Close(startPred + i -1), predictedClose(i)]);
+        if (sign(predictedClose(i) - Close(startPred + i - 1)) == sign(Close(startPred + i) - Close(startPred + i - 1)))
             % se il segno della derivata è corretto
             p2(i).Color = 'g';
             prediction.good = prediction.good + 1;
@@ -205,7 +206,7 @@ for i=1:predictionLength %- 1   % ho tolto il -1 perchè non mi trovavo -L
         p2(i).MarkerSize = 5;
 
         % la predizione è corretta -> MAPE
-        MAPE = MAPE + abs((Close(ulim + i) - predictedClose(i))/Close(ulim + i));
+        MAPE = MAPE + abs((Close(startPred + i) - predictedClose(i))/Close(startPred + i));
     else
         % incremento il conteggio di predizioni non valide
         prediction.invalid = prediction.invalid + 1;
@@ -230,7 +231,7 @@ fprintf("Mean Absolute Percentage Error (MAPE): %.2f%%\n", MAPE*100);
 
 
 figure(Name="Grafico marketing")
-plot(Date(ulim+1:ulim+predictionLength),Close(ulim+1:ulim+predictionLength),'Marker','.');
+plot(Date(startPred+1:startPred+predictionLength),Close(startPred+1:startPred+predictionLength),'Marker','.');
 hold on
-plot(Date(ulim+1:ulim+predictionLength),predictedClose,'Color','red','Marker','.')
+plot(Date(startPred+1:startPred+predictionLength),predictedClose,'Color','red','Marker','.')
 grid
