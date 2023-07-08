@@ -53,13 +53,13 @@ else
     mostLikelyObs = NaN;
     
     if dynamicWindow
-        converged = 0;
+        numTrials = length(obsSeq)-3;
     else
         % if dynamicWindow is set to 0, skip the while loop for convergence
-        converged = 1;
+        numTrials = 1;
     end
     
-    while converged == 0
+    for trials=1:numTrials
         for possibleObs = possibleObservations     % For each possible observation
             [~, logPSeq] = hmmdecode([obsSeq, possibleObs], transMatrix, emissMatrix); 
             % come alternativa possiamo mettere obsSeq(2:end), così che la sequenza sia lunga 10
@@ -70,13 +70,13 @@ else
             end
         end
 
-        if ((maxLogPSeq == -inf) && (length(obsSeq) > 3))
+        if (maxLogPSeq == -inf)
             % If convergence is not reached, 
             % Remove the first value from the sequence and try hmmdecode
             % again
             obsSeq = obsSeq(2:end);
         else
-            converged = 1;
+            break
         end
 
     end
