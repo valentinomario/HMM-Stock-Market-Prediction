@@ -8,16 +8,16 @@ load AAPL.mat;  % Date Open Close High Low
 TRAIN = 1;      % see train section: if 0 a specified .mat file is loaded
                 %                    if 1 a new training is done
 
-shiftByOne = 1; % see sequences train section: if 0 a new sequence is grouped every #days = latency
+shiftByOne = 0; % see sequences train section: if 0 a new sequence is grouped every #days = latency
                 %                              if 1 a new sequence is grouped every day
 
 % select period of observation, date format MM/DD/YYYY
-llim = indexOfDate(Date,'2020-04-01');
+llim = indexOfDate(Date,'2018-04-02');
 ulim = indexOfDate(Date,'2021-04-01');
 
 startPred = indexOfDate(Date,'2022-01-03'); % first day of prediction
 lastDate  = indexOfDate(Date, Date(end));   % last avaiable date
-predictionLength = 600;                     % how many days of prediction starting from startPred
+predictionLength = 350;                     % how many days of prediction starting from startPred
                                             % must not exceed (lastDate-startPred)                                           
 if ((startPred+predictionLength)>lastDate) 
         error('Wrong interval');
@@ -52,7 +52,7 @@ for i = 1:length(Date_l)
 end
 
 underlyingStates = 4; % number of hidden states
-mixturesNumber = 4;   % number of mixture components for each state
+mixturesNumber = 2;   % number of mixture components for each state
 latency = 10;         % days aka vectors in sequence
 
 %% Markov Chain guesses
@@ -112,10 +112,10 @@ if (shiftByOne) % interval shifted by #days = 1
         observations_train(i,:) = observations(i:(i+latency-1));
     end
 else            % interval shifted by #days = latency
-    observations_train = zeros(ceil(length(Date_l) / latency),latency); %#ok<UNRCH>
-    for i=1:ceil(length(Date_l) / latency)
+    observations_train = zeros(ceil(length(Date_l) / latency)-1,latency); %#ok<UNRCH>
+    for i=1:ceil(length(Date_l) / latency)-1
        startIndex = (i - 1) * latency + 1;
-       endIndex = min(startIndex + latency - 1, length(Date_l));
+       endIndex = startIndex + latency - 1;
        observations_train(i,:) = observations(startIndex:endIndex);
     end
 end
