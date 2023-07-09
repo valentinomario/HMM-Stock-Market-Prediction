@@ -157,7 +157,7 @@ for t = 1:predictionLength
     ulimPred = (startPred + t -1);           
 
     predictionFracChange = (Open(llimPred:ulimPred) - Close(llimPred:ulimPred))./Open(llimPred:ulimPred);
-    predictionFracHigh   = (High(llimPred:ulimPred) - Close(llimPred:ulimPred))./Open(llimPred:ulimPred);
+    predictionFracHigh   = (High(llimPred:ulimPred) - Open(llimPred:ulimPred))./Open(llimPred:ulimPred);
     predictionFracLow    = (Open(llimPred:ulimPred) - Low(llimPred:ulimPred))  ./Open(llimPred:ulimPred);
     %discretization of data during current observation interval    
     predictionFracChange = discretize(predictionFracChange, edgesFChange);
