@@ -12,10 +12,13 @@ shiftByOne = 1; % see sequences train section: if 0 a new sequence is grouped ev
                 %                              if 1 a new sequence is grouped every day
 
 % select period of observation, date format MM/DD/YYYY
-llim = indexOfDate(Date,'2017-01-03');
-ulim = indexOfDate(Date,'2018-01-02');
+llim_date = '2017-01-03';
+ulim_date = '2018-01-02';
+llim = indexOfDate(Date,llim_date);
+ulim = indexOfDate(Date,ulim_date);
 
-startPred = indexOfDate(Date,'2023-01-03'); % first day of prediction
+startPred_date = '2023-01-03';
+startPred = indexOfDate(Date,startPred_date); % first day of prediction
 lastDate  = indexOfDate(Date, Date(end));   % last avaiable date
 predictionLength = 101;                     % how many days of prediction starting from startPred
                                             % must not exceed (lastDate-startPred)                                           
@@ -139,6 +142,7 @@ if (TRAIN)
         %error(warnMsg, warnId);
         trinInfo.converged = 0;
     end
+    filename = strcat("hmmtrain-", string(datetime('now', 'format', 'yyyy-MM-dd-HH-mm-ss')), ".mat"), "ESTTR", "ESTEMIT","trainInfo";
     save(strcat("hmmtrain-", string(datetime('now', 'format', 'yyyy-MM-dd-HH-mm-ss')), ".mat"), "ESTTR", "ESTEMIT","trainInfo");
     % play sound when training is finished
     load handel
@@ -235,9 +239,11 @@ title('andamento prezzi dati reali vs predizione')
 
 % Stampo riepilogo
 disp("------------------------------")
+predictionRatio = 100*(prediction.bad + prediction.good)/predictionLength;
+correctPredictionRatio = prediction.good, 100 * prediction.good / (prediction.bad + prediction.good);
 fprintf("Total predictions: %d (%.2f%%)\nCorrect derivative: %d (%.2f%%)\nWrong derivative: %d (%.2f%%)\n", ...
-    prediction.bad + prediction.good, 100*(prediction.bad + prediction.good)/predictionLength, ...
-    prediction.good, 100 * prediction.good / (prediction.bad + prediction.good), ...
+    prediction.bad + prediction.good, predictionRatio, ...
+    correctPredictionRatio, ...
     prediction.bad, 100 * prediction.bad / (prediction.bad + prediction.good));
 
 % Calcolo MAPE
@@ -253,3 +259,12 @@ plot(Date(startPred+1:startPred+predictionLength),Close(startPred+1:startPred+pr
 hold on
 plot(Date(startPred+1:startPred+predictionLength),predictedClose,'Color','red','Marker','.')
 grid
+
+
+% print md instruction for appending the train to the table
+if(TRAIN)
+    fprintf("|%s",filename)
+else
+    fprintf("|filename")
+end
+fprintf("|%s|%s|%d|%d|%d|%s|%d|%.2f%%|%.2f%%|%.2f%%|your notes here\n",llim_date,ulim_date,underlyingStates,mixturesNumber,latency,startPred_date,predictionLength,predictionRatio,correctPredictionRatio,MAPE*100);
