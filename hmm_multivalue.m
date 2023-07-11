@@ -148,7 +148,7 @@ if (TRAIN)
     load handel
     sound(y,Fs)
 else
-    load("hmmtrain-2023-07-06-13-18-13.mat");
+    load("hmmtrain-2023-07-09-12-42-29.mat");
 end
 
 %% predizione
@@ -201,9 +201,13 @@ lastPredDate = (startPred  + predictionLength);
 
 % initialization of MAPE 
 MAPE = 0;
-
-figure(Name='Real vs predicted data')
-p1 = plot(Date(llim : lastPredDate), Close(llim:lastPredDate));
+figure2 = figure(Name='Candlestick');
+grid on
+%clrs = ['red','green'];  % the two-vector from which to choose
+%candleColor = clrs((Close(startPred : lastPredDate) >= Open(startPred : lastPredDate)) + 1);  % select based on condition
+candle(timetable(Date(startPred : lastPredDate), Open(startPred : lastPredDate), High(startPred : lastPredDate), Low(startPred : lastPredDate), Close(startPred : lastPredDate), 'VariableNames', {'Open', 'High', 'Low', 'Close'}));
+figure1 = figure(Name='Real vs predicted data');
+p1 = plot(Date(startPred : lastPredDate), Close(startPred:lastPredDate));
 grid on
 hold on
 p1.LineWidth = 0.3;
@@ -217,7 +221,7 @@ p2 = gobjects(predictionLength, 1);
 % simulates daily trading strategy based on predictions
 investmentSim = 100 .* ones(1, predictionLength + 1);
 
-for i=1:predictionLength %- 1   % ho tolto il -1 perchè non mi trovavo -L
+for i = 1:predictionLength %- 1   % ho tolto il -1 perchè non mi trovavo -L
 
     % dummy strategy simulation
     if (isnan(predictedClose(i)))
@@ -227,10 +231,13 @@ for i=1:predictionLength %- 1   % ho tolto il -1 perchè non mi trovavo -L
         % long
         if predictedClose(i) > Open(startPred + i)
             investmentSim(i+1) = (1 + (Close(startPred + i) - Open(startPred + i)) / Open(startPred + i)) * investmentSim(i);
+            fprintf("%s: buy for %.2f, sell for %.2f\n", string(Date(startPred + i)), Open(startPred + i), Close(startPred + i));
         % short
         elseif predictedClose(i) < Open(startPred + i)
             investmentSim(i+1) = (1 + (Open(startPred + i) - Close(startPred + i)) / Open(startPred + i)) * investmentSim(i);
+            fprintf("%s: sell for %.2f, buy for %.2f\n", string(Date(startPred + i)), Open(startPred + i), Close(startPred + i));
         end
+        % se è = non conviene investire!
     end
 
     % graphing results
@@ -242,7 +249,7 @@ for i=1:predictionLength %- 1   % ho tolto il -1 perchè non mi trovavo -L
     if (~isnan(predictedClose(i)))     % se è riuscito a fare una previsione
         yyaxis left
         p2(i) = plot(Date(startPred + i - 1 : startPred + i), [Close(startPred + i -1), predictedClose(i)],'-');
-        if (sign(predictedClose(i) - Close(startPred + i - 1)) == sign(Close(startPred + i) - Close(startPred + i - 1)))
+        if (sign(predictedClose(i) - Open(startPred + i)) == sign(Close(startPred + i) - Open(startPred + i)))
             % se il segno della derivata è corretto
             p2(i).Color = 'g';
             prediction.good = prediction.good + 1;
@@ -285,17 +292,17 @@ MAPE = MAPE / (prediction.bad + prediction.good);
 fprintf("Mean Absolute Percentage Error (MAPE): %.2f%%\n", MAPE*100);
 
 
-figure(Name="Grafico marketing")
-plot(Date(startPred+1:startPred+predictionLength), Close(startPred+1:startPred+predictionLength),'Marker','.');
-hold on
-plot(Date(startPred+1:startPred+predictionLength), predictedClose,'Color','red','Marker','.')
-grid
+% % % % figure(Name="Grafico marketing")
+% % % % plot(Date(startPred+1:startPred+predictionLength), Close(startPred+1:startPred+predictionLength),'Marker','.');
+% % % % hold on
+% % % % plot(Date(startPred+1:startPred+predictionLength), predictedClose,'Color','red','Marker','.')
+% % % % grid
 
 
 % print md instruction for appending the train to the table
 if (TRAIN)
-    fprintf("|%s",filename) %#ok<UNRCH>
+    fprintf("|%s", filename) %#ok<UNRCH>
 else
     fprintf("|filename")
 end
-fprintf("|%s|%s|%d|%d|%d|%s|%d|%.2f%%|%.2f%%|%.2f%%|your notes here\n",llim_date,ulim_date,underlyingStates,mixturesNumber,latency,startPred_date,predictionLength,predictionRatio,correctPredictionRatio,MAPE*100);
+fprintf("|%s|%s|%d|%d|%d|%s|%d|%.2f%%|%.2f%%|%.2f%%|your notes here\n", llim_date, ulim_date, underlyingStates, mixturesNumber, latency, startPred_date, predictionLength, predictionRatio, correctPredictionRatio, MAPE*100);
