@@ -291,8 +291,8 @@ grid
 
 
 % print md instruction for appending the train to the table
-if(TRAIN)
-    fprintf("|%s",filename)
+if (TRAIN)
+    fprintf("|%s",filename) %#ok<UNRCH>
 else
     fprintf("|filename")
 end
