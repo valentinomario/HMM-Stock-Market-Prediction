@@ -17,7 +17,7 @@ ulim_date = '2018-01-02';
 llim = indexOfDate(Date,llim_date);
 ulim = indexOfDate(Date,ulim_date);
 
-startPred_date = '2023-01-03';
+startPred_date = '2022-01-03';
 startPred = indexOfDate(Date,startPred_date); % first day of prediction
 lastDate  = indexOfDate(Date, Date(end));   % last avaiable date
 predictionLength = 101;                     % how many days of prediction starting from startPred
@@ -211,9 +211,34 @@ p1.MarkerSize = 5;
 
 prediction = struct('good', 0, 'bad', 0, 'invalid', 0);
 p2 = gobjects(predictionLength - 1, 1);
-%p2 = plot(Date(ulim +1 : lastPredDate), predictedClose);
+
+% simulates daily trading strategy based on predictions
+investmentSim = 100.*ones(1,predictionLength+1);
+
 for i=1:predictionLength %- 1   % ho tolto il -1 perchè non mi trovavo -L
+
+    % dummy strategy simulation
+    if(isnan(predictedClose(i)))
+        % don't trade without a prediction
+        investmentSim(i+1)=investmentSim(i); 
+    else
+        % long
+        if predictedClose(i)>Open(startPred + i)
+            investmentSim(i+1) = (1+(Close(startPred + i)-Open(startPred + i))/Open(startPred + i))*investmentSim(i);
+        % short
+        elseif predictedClose(i)<Open(startPred + i)
+            investmentSim(i+1) = (1+(Open(startPred + i)-Close(startPred + i))/Open(startPred + i))*investmentSim(i);
+        end
+    end
+
+    % graphing results
+    yyaxis right
+    p2(i) = plot(Date(startPred +i:startPred+i+1),[investmentSim(i) investmentSim(i+1)],'-');
+    p2(i).Color = 'black';
+
+
     if (~isnan(predictedClose(i)))     % se è riuscito a fare una previsione
+        yyaxis left
         p2(i) = plot(Date(startPred + i - 1 : startPred + i), [Close(startPred + i -1), predictedClose(i)]);
         if (sign(predictedClose(i) - Close(startPred + i - 1)) == sign(Close(startPred + i) - Close(startPred + i - 1)))
             % se il segno della derivata è corretto
@@ -234,7 +259,10 @@ for i=1:predictionLength %- 1   % ho tolto il -1 perchè non mi trovavo -L
         prediction.invalid = prediction.invalid + 1;
     end
 end
-
+yyaxis right
+ylim([50 150]);
+yyaxis left
+ylim([120 220])
 title('andamento prezzi dati reali vs predizione')
 
 % Stampo riepilogo
