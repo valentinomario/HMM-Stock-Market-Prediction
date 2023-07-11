@@ -110,13 +110,13 @@ end
 % discretized monodimensional values
 
 if (shiftByOne) % interval shifted by #days = 1
-    observations_train = zeros(length(Date_l)-latency,latency);
-    for i=1:(length(Date_l)-latency)
+    observations_train = zeros(length(Date_l) - latency, latency);
+    for i = 1:(length(Date_l) - latency)
         observations_train(i,:) = observations(i:(i+latency-1));
     end
 else            % interval shifted by #days = latency
-    observations_train = zeros(ceil(length(Date_l) / latency)-1,latency); %#ok<UNRCH>
-    for i=1:ceil(length(Date_l) / latency)-1
+    observations_train = zeros(ceil(length(Date_l) / latency) - 1, latency); %#ok<UNRCH>
+    for i = 1:ceil(length(Date_l) / latency) - 1
        startIndex = (i - 1) * latency + 1;
        endIndex = startIndex + latency - 1;
        observations_train(i,:) = observations(startIndex:endIndex);
@@ -132,11 +132,11 @@ if (TRAIN)
 
     % construction of transition and emission matrixes
     tic                             % start stopwatch
-    [ESTTR,ESTEMIT] = hmmtrain(observations_train, transitionMatrix, emissionProbabilities,'Verbose',true,'Maxiterations', maxIter);
+    [ESTTR,ESTEMIT] = hmmtrain(observations_train, transitionMatrix, emissionProbabilities, 'Verbose', true, 'Maxiterations', maxIter);
     trainInfo.trainingTime = toc;   % stop
 
     [warnMsg, warnId] = lastwarn();
-    if(isempty(warnId))
+    if (isempty(warnId))
         trainInfo.converged = 1;
     else
         %error(warnMsg, warnId);
@@ -164,7 +164,7 @@ for t = 1:predictionLength
     ulimPred = (startPred + t - 1);           
 
     predictionFracChange = (Open(llimPred:ulimPred) - Close(llimPred:ulimPred))./Open(llimPred:ulimPred);
-    predictionFracHigh   = (High(llimPred:ulimPred) - Open(llimPred:ulimPred))./Open(llimPred:ulimPred);
+    predictionFracHigh   = (High(llimPred:ulimPred) - Open(llimPred:ulimPred)) ./Open(llimPred:ulimPred);
     predictionFracLow    = (Open(llimPred:ulimPred) - Low(llimPred:ulimPred))  ./Open(llimPred:ulimPred);
     %discretization of data during current observation interval    
     predictionFracChange = discretize(predictionFracChange, edgesFChange);
@@ -176,8 +176,9 @@ for t = 1:predictionLength
         predictionObservations(i) = map3DTo1D(predictionFracChange(i), predictionFracHigh(i), predictionFracLow(i), numberOfPoints(1), numberOfPoints(2), numberOfPoints(3));
     end
     %prediction
+    fprintf("%.2f%% : ", t / predictionLength * 100);
     predictedObs = hmmPredictObservation(predictionObservations, ESTTR, ESTEMIT, 'verbose', 1, 'possibleObservations', 1:totalPoints);
-    
+
     if (~isnan(predictedObs))
         % 3D mapping of current valid prediction
         [predictedFC, predictedFH, predictedFL] = map1DTo3D(predictedObs, numberOfPoints(1), numberOfPoints(2), numberOfPoints(3));
@@ -190,10 +191,10 @@ for t = 1:predictionLength
     if (isnan(predictedObs))    % invalide prediction corresponds to invalid value for Close
         predictedClose(t) = NaN;    
     else                        % t-th element filled with Close value based on predicted fractional change
-        predictedClose(t) = Open(ulimPred+1) * (1 - predObservations3D(t,1));
+        predictedClose(t) = Open(ulimPred+1) * (1 - predObservations3D(t, 1));
     end
 end
-
+fprintf("\n")
 %% grafici
 disp("Plots")
 lastPredDate = (startPred  + predictionLength);
@@ -210,30 +211,31 @@ p1.Marker = '.';
 p1.MarkerSize = 5;
 
 prediction = struct('good', 0, 'bad', 0, 'invalid', 0);
-p2 = gobjects(predictionLength - 1, 1);
+% istantiate graphic objects array
+p2 = gobjects(predictionLength, 1);
 
 % simulates daily trading strategy based on predictions
-investmentSim = 100.*ones(1,predictionLength+1);
+investmentSim = 100 .* ones(1, predictionLength + 1);
 
 for i=1:predictionLength %- 1   % ho tolto il -1 perchè non mi trovavo -L
 
     % dummy strategy simulation
-    if(isnan(predictedClose(i)))
+    if (isnan(predictedClose(i)))
         % don't trade without a prediction
-        investmentSim(i+1)=investmentSim(i); 
+        investmentSim(i+1) = investmentSim(i); 
     else
         % long
-        if predictedClose(i)>Open(startPred + i)
-            investmentSim(i+1) = (1+(Close(startPred + i)-Open(startPred + i))/Open(startPred + i))*investmentSim(i);
+        if predictedClose(i) > Open(startPred + i)
+            investmentSim(i+1) = (1 + (Close(startPred + i) - Open(startPred + i)) / Open(startPred + i)) * investmentSim(i);
         % short
-        elseif predictedClose(i)<Open(startPred + i)
-            investmentSim(i+1) = (1+(Open(startPred + i)-Close(startPred + i))/Open(startPred + i))*investmentSim(i);
+        elseif predictedClose(i) < Open(startPred + i)
+            investmentSim(i+1) = (1 + (Open(startPred + i) - Close(startPred + i)) / Open(startPred + i)) * investmentSim(i);
         end
     end
 
     % graphing results
     yyaxis right
-    p2(i) = plot(Date(startPred + i - 1:startPred+i),[investmentSim(i) investmentSim(i+1)],'-');
+    p2(i) = plot(Date(startPred + i - 1:startPred+i), [investmentSim(i) investmentSim(i+1)],'-');
     p2(i).Color = 'black';
 
 
@@ -253,7 +255,7 @@ for i=1:predictionLength %- 1   % ho tolto il -1 perchè non mi trovavo -L
         p2(i).MarkerSize = 5;
 
         % la predizione è corretta -> MAPE
-        MAPE = MAPE + abs((Close(startPred + i) - predictedClose(i))/Close(startPred + i));
+        MAPE = MAPE + abs((Close(startPred + i) - predictedClose(i)) / Close(startPred + i));
     else
         % incremento il conteggio di predizioni non valide
         prediction.invalid = prediction.invalid + 1;
@@ -267,7 +269,7 @@ title('andamento prezzi dati reali vs predizione')
 
 % Stampo riepilogo
 disp("------------------------------")
-predictionRatio = 100*(prediction.bad + prediction.good)/predictionLength;
+predictionRatio = 100 * (prediction.bad + prediction.good) / predictionLength;
 correctPredictionRatio = 100 * prediction.good / (prediction.bad + prediction.good);
 fprintf("Total predictions: %d (%.2f%%)\nCorrect derivative: %d (%.2f%%)\nWrong derivative: %d (%.2f%%)\n", ...
     prediction.bad + prediction.good, predictionRatio, ...
@@ -284,9 +286,9 @@ fprintf("Mean Absolute Percentage Error (MAPE): %.2f%%\n", MAPE*100);
 
 
 figure(Name="Grafico marketing")
-plot(Date(startPred+1:startPred+predictionLength),Close(startPred+1:startPred+predictionLength),'Marker','.');
+plot(Date(startPred+1:startPred+predictionLength), Close(startPred+1:startPred+predictionLength),'Marker','.');
 hold on
-plot(Date(startPred+1:startPred+predictionLength),predictedClose,'Color','red','Marker','.')
+plot(Date(startPred+1:startPred+predictionLength), predictedClose,'Color','red','Marker','.')
 grid
 
 
