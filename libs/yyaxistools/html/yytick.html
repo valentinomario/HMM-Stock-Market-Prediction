@@ -1,0 +1,327 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>yytick</title><meta name="generator" content="MATLAB 9.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2022-04-18"><meta name="DC.source" content="yytick.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; }
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+span.typesection { color:#A0522D }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>yytick</h1><!--introduction--><p>align ticks on both y-axes of a yyaxis plot with nice values</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Syntax</a></li><li><a href="#6">Example</a></li><li><a href="#10">Background</a></li><li><a href="#11">Limitations</a></li><li><a href="#12">See also</a></li></ul></div><h2 id="1">Syntax</h2><p></p><pre class="codeinput">yytick
+</pre><p>adjusts the axes limits of both y-axes of a yyaxis plot to allow 'nice' tick values appearing at the same canvas height, so the major y-axis grid lines on both sides coincide.</p><p>For that purpose, it also sets the tick values mode on one side (the <i>dependent</i> side) to 'manual' and computes the tick values on this side at equal heights as the ticks on the other side (the <i>primary</i> side) where the tick values mode is 'auto'.</p><p>Use yyzoom to keep the (dependent) tick values updated when zooming.</p><pre class="codeinput">[ax, yyLim, pInd] = yytick;
+</pre><p>returns the axes object <tt>ax</tt>, the computed y-limits in a 4-element vector <tt>yyLim = [y1Low, y1Up, y2Low, y2Up]</tt>, and the linear index of the primary y-axis ruler <tt>pInd</tt>.</p><p>
+<pre class="codeinput">
+____ = yytick(ax);
+</pre></p><p>acts on the axes object <tt>ax</tt> (default: current axes, gca).</p><p>
+<br>
+The default behaviour of yytick should be adequate for most use cases.
+Use the optional parameter/value-pairs for more detailed control:
+<pre class="codeinput">
+____ = yytick(____, 'parameter', value);
+____ = yytick(____, parameter=value);
+</pre>
+<ul>
+<li><span style="color:#A020F0;"><tt> 'primaryside' </tt></span>
+<br> <tt>'left'</tt>, <tt>'right'</tt>, <tt>'current'</tt>, or <tt>'auto'</tt> (default)
+<br>Specify the primary side. 'current' selects the current value of
+       the YAxisLocation property of the axes. 'auto' selects the side
+       with less added canvas space penalty.
+</li>
+<li><span style="color:#A020F0;"><tt> 'limits' </tt></span>
+<br> 4-element vector, <tt>[y1Low, y1Up, y2Low, y2Up]</tt>
+<br>Specify the limit values of the left and right y-axes that must be
+       covered by the values computed with yytick.
+       If not specified or empty (default), the covered limits are derived
+       from the existing axes (see 'limitmethod').
+</li>
+<li><span style="color:#A020F0;"><tt> 'limitmethod' </tt></span>
+<br> <tt>'tickaligned'</tt>, <tt>'tight'</tt> (default), <tt>'padded'</tt>, or <tt>'none'</tt>
+<br>Specify the method to determine the covered limit values of both
+       axes. 'none' selects the current axes limits.
+</li>
+<li><span style="color:#A020F0;"><tt> 'applylimits' </tt></span>
+<br> <tt>true</tt> (default) or <tt>false</tt>
+<br>Specify whether yytick applies the computed limits and ticks to the
+       axes or only returns the limit values.
+</li>
+<li><span style="color:#A020F0;"><tt> 'tickratio' </tt></span>
+<br> vector, increasing values within [1,10) (upper-exclusive)
+<br>Specify the allowed multipliers, except for their powers of ten
+       (computed by yytick), between the primary and the dependent side.
+       The default is [1, 1.5, 2, 3, 4, 5, 8].
+</li>
+<li><span style="color:#A020F0;"><tt> 'ratioweight' </tt></span>
+<br> vector of the same size as the tickratio value, or zero
+<br>To have a penalty value for the different multipliers, the added
+       white canvas space when adjusting the limits is divided by the
+       corresponding value in ratioweight. yytick selects a multiplier
+       with a minimum penalty value.
+       If not specified or zero (default), it is set to be all ones for
+       each multiplier, unless 'tickratio' is set to default values, in
+       which case it is [15, 5, 12, 6, 9, 10, 7], preferring multiplier 1
+       the most.
+</li>
+<li><span style="color:#A020F0;"><tt> 'fixside' </tt></span>
+<br> <tt>'left'</tt>, <tt>'right'</tt>, <tt>'primary'</tt>, <tt>'dependent'</tt>, or <tt>'none'</tt> (default)
+<br>Specify a side where the axes limits (but not necessarily the tick
+       values) remain unchanged.
+</li>
+</ul>
+</p><p>Note that</p><pre class="codeinput">yyaxtoolbar
+</pre><p>provides axes toolbar support for yytick.</p><h2 id="6">Example</h2><pre class="codeinput"><span class="comment">% --- sample data</span>
+x = -5:0.1:5;
+y1 = 4+5*sin(0.5*x+pi/6) + sin(x-pi/8);
+y2 = 2e3+3.1*(1000 + 333*sin(1.25*x+pi/6) + 250*sin(2*x-pi/8));
+<span class="comment">% --- plot data with yyaxis</span>
+figure
+yyaxis <span class="string">left</span>
+plot(x,y1,<span class="string">'o-'</span>)
+ylabel(<span class="string">'y_1'</span>)
+grid <span class="string">on</span>
+yyaxis <span class="string">right</span>
+plot(x,y2,<span class="string">'o-'</span>)
+ylabel(<span class="string">'y_2'</span>)
+</pre><p>This code produces a standard yyaxis chart:</p><p><img vspace="5" hspace="5" src="yytickHelp_01.png" alt=""> </p><pre class="codeinput"><span class="comment">% --- align ticks</span>
+yytick
+</pre><p><img vspace="5" hspace="5" src="yytickHelp_02.png" alt=""> </p><p>The ticks of the y-axes are now aligned, i.e. at equal canvas height.</p><p>Add axes toolbar support for yytick:</p><pre class="codeinput"><span class="comment">% --- replace default toolbar with yy-axtoolbar (optional)</span>
+yyaxtoolbar
+</pre><p>E.g. selecting "Tick-Aligned Limits" from the drop-down menu of the yy-axtoolbar</p><p><img vspace="5" hspace="5" src="yyaxtoolbarHelp_limitmethodTickAligned.png" alt=""> </p><p>sets the limits of both y-axes to tick-aligned values while keeping the ticks on both sides at equal canvas height.</p><p><img vspace="5" hspace="5" src="yytickHelp_03.png" alt=""> </p><h2 id="10">Background</h2><p>yytick restricts the ratio of the new y-axes lengths (yLen = upper limit minus lower limit) to certain values m, so that when Matlab&reg; determines the tick values of the primary y-axes, the tick values of the dependent y-axis at the same canvas height are easily readable (yLenDependent = m * yLenPrimary).</p><h2 id="11">Limitations</h2><div><ul><li>yytick is designed for linear axis scaling.</li><li>Matlab&reg; may recompute the y-axes ticks after axes size or plotted   data changes. Call yytick after such changes.</li></ul></div><h2 id="12">See also</h2><p> <a href="yyzoom.html">yyzoom</a>,
+<a href="yyaxtoolbar.html">yyaxtoolbar</a> </p><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2022a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% yytick 
+% 
+% align ticks on both y-axes of a yyaxis plot with nice values
+%
+%% Syntax
+% 
+% <html></html>
+%
+yytick
+%%%
+% adjusts the axes limits of both y-axes of a yyaxis plot to allow 'nice'
+% tick values appearing at the same canvas height, so the major y-axis grid
+% lines on both sides coincide.
+% 
+% For that purpose, it also sets the tick values mode on one side (the
+% _dependent_ side) to 'manual' and computes the tick values on this side
+% at equal heights as the ticks on the other side (the _primary_ side)
+% where the tick values mode is 'auto'.
+%
+% Use yyzoom to keep the (dependent) tick values updated when zooming.
+%
+%
+[ax, yyLim, pInd] = yytick;
+%%%
+% returns the axes object |ax|, the computed y-limits in a 4-element vector
+% |yyLim = [y1Low, y1Up, y2Low, y2Up]|, and the linear index of
+% the primary y-axis ruler |pInd|.
+%
+% <html>
+% <pre class="codeinput">
+% ____ = yytick(ax);
+% </pre></html>
+%
+% 
+% acts on the axes object |ax| (default: current axes, gca). 
+%
+% <html>
+% <br>
+% The default behaviour of yytick should be adequate for most use cases.
+% Use the optional parameter/value-pairs for more detailed control:
+% <pre class="codeinput">
+% ____ = yytick(____, 'parameter', value);
+% ____ = yytick(____, parameter=value);
+% </pre>
+% <ul>
+% <li><span style="color:#A020F0;"><tt> 'primaryside' </tt></span>
+% <br> <tt>'left'</tt>, <tt>'right'</tt>, <tt>'current'</tt>, or <tt>'auto'</tt> (default)
+% <br>Specify the primary side. 'current' selects the current value of
+%        the YAxisLocation property of the axes. 'auto' selects the side
+%        with less added canvas space penalty.
+% </li>
+% <li><span style="color:#A020F0;"><tt> 'limits' </tt></span>
+% <br> 4-element vector, <tt>[y1Low, y1Up, y2Low, y2Up]</tt>
+% <br>Specify the limit values of the left and right y-axes that must be
+%        covered by the values computed with yytick.
+%        If not specified or empty (default), the covered limits are derived
+%        from the existing axes (see 'limitmethod').
+% </li>
+% <li><span style="color:#A020F0;"><tt> 'limitmethod' </tt></span>
+% <br> <tt>'tickaligned'</tt>, <tt>'tight'</tt> (default), <tt>'padded'</tt>, or <tt>'none'</tt>
+% <br>Specify the method to determine the covered limit values of both
+%        axes. 'none' selects the current axes limits.
+% </li>
+% <li><span style="color:#A020F0;"><tt> 'applylimits' </tt></span>
+% <br> <tt>true</tt> (default) or <tt>false</tt>
+% <br>Specify whether yytick applies the computed limits and ticks to the
+%        axes or only returns the limit values.
+% </li>
+% <li><span style="color:#A020F0;"><tt> 'tickratio' </tt></span>
+% <br> vector, increasing values within [1,10) (upper-exclusive)
+% <br>Specify the allowed multipliers, except for their powers of ten
+%        (computed by yytick), between the primary and the dependent side.
+%        The default is [1, 1.5, 2, 3, 4, 5, 8].
+% </li>
+% <li><span style="color:#A020F0;"><tt> 'ratioweight' </tt></span>
+% <br> vector of the same size as the tickratio value, or zero
+% <br>To have a penalty value for the different multipliers, the added
+%        white canvas space when adjusting the limits is divided by the
+%        corresponding value in ratioweight. yytick selects a multiplier
+%        with a minimum penalty value.
+%        If not specified or zero (default), it is set to be all ones for
+%        each multiplier, unless 'tickratio' is set to default values, in
+%        which case it is [15, 5, 12, 6, 9, 10, 7], preferring multiplier 1
+%        the most.
+% </li>
+% <li><span style="color:#A020F0;"><tt> 'fixside' </tt></span>
+% <br> <tt>'left'</tt>, <tt>'right'</tt>, <tt>'primary'</tt>, <tt>'dependent'</tt>, or <tt>'none'</tt> (default)
+% <br>Specify a side where the axes limits (but not necessarily the tick
+%        values) remain unchanged.
+% </li>
+% </ul>
+% </html>
+%
+%
+%
+
+%%%
+% Note that
+yyaxtoolbar
+%%
+% provides axes toolbar support for yytick.
+%
+ 
+%% Example
+%  
+
+% REPLACE_WITH_DASH_DASH- sample data
+x = -5:0.1:5;
+y1 = 4+5*sin(0.5*x+pi/6) + sin(x-pi/8);
+y2 = 2e3+3.1*(1000 + 333*sin(1.25*x+pi/6) + 250*sin(2*x-pi/8));
+% REPLACE_WITH_DASH_DASH- plot data with yyaxis
+figure
+yyaxis left
+plot(x,y1,'o-')
+ylabel('y_1')
+grid on
+yyaxis right
+plot(x,y2,'o-')
+ylabel('y_2')
+
+%%%
+% This code produces a standard yyaxis chart:
+% 
+% <<yytickHelp_01.png>>
+% 
+
+% REPLACE_WITH_DASH_DASH- align ticks
+yytick
+
+%%%
+% 
+% <<yytickHelp_02.png>>
+% 
+% The ticks of the y-axes are now aligned, i.e. at equal canvas height.
+% 
+% Add axes toolbar support for yytick:
+
+% REPLACE_WITH_DASH_DASH- replace default toolbar with yy-axtoolbar (optional)
+yyaxtoolbar
+
+%%%
+% E.g. selecting "Tick-Aligned Limits" from the drop-down menu of the
+% yy-axtoolbar 
+%
+% <<yyaxtoolbarHelp_limitmethodTickAligned.png>>
+%
+% sets the limits of both y-axes to tick-aligned values while keeping the
+% ticks on both sides at equal canvas height.
+% 
+% <<yytickHelp_03.png>>
+% 
+
+%% Background
+%
+% yytick restricts the ratio of the new y-axes lengths (yLen = upper limit
+% minus lower limit) to certain values m, so that when Matlab(R)
+% determines the tick values of the primary y-axes, the tick
+% values of the dependent y-axis at the same canvas height are easily
+% readable (yLenDependent = m * yLenPrimary).
+% 
+%
+
+%% Limitations
+%
+% * yytick is designed for linear axis scaling.
+% * Matlab(R) may recompute the y-axes ticks after axes size or plotted
+%   data changes. Call yytick after such changes.
+% 
+%
+%% See also
+% 
+% <html> <a href="yyzoom.html">yyzoom</a>,
+% <a href="yyaxtoolbar.html">yyaxtoolbar</a> </html>
+% 
+
+##### SOURCE END #####
+--></body></html>

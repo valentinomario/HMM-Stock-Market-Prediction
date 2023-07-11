@@ -1,0 +1,285 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>yyaxtoolbar</title><meta name="generator" content="MATLAB 9.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2022-04-18"><meta name="DC.source" content="yyaxtoolbar.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; }
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+span.typesection { color:#A0522D }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>yyaxtoolbar</h1><!--introduction--><p>extended axes toolbar for yyaxis charts</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Syntax</a></li><li><a href="#4">Generate a yyaxis Chart</a></li><li><a href="#6">Add the yy-Axtoolbar</a></li><li><a href="#8">Use the yy-Axtoolbar Main Buttons</a></li><li><a href="#9">Supplemental yy-Axtoolbar Buttons (Drop-down Menu)</a></li><li><a href="#10">Aligned Ticks and Limits in a Zoomed in Region</a></li><li><a href="#11">See also</a></li></ul></div><h2 id="1">Syntax</h2><p></p><pre class="codeinput">yyaxtoolbar
+</pre><p>adds a custom axes toolbar for yyaxis plots on the current axes to facilitate interactive zooming and setting limits and ticks on both y-axes.</p><pre class="codeinput">yyaxtoolbar(ax)
+</pre><p>adds the toolbar to axes ax.</p><p><tt>yyaxtoolbar</tt> will create a yyaxis chart if not yet existing.</p><p>The following demo shows a typical workflow for interactively exploring yyaxis charts with the aid of the yy-axtoolbar's buttons.</p><h2 id="4">Generate a yyaxis Chart</h2><pre class="codeinput"><span class="comment">% --- sample data</span>
+x = -5:0.1:5;
+y1 = 4+5*sin(0.5*x+pi/6) + sin(x-pi/8);
+y2 = 2e3+3.1*(1000 + 333*sin(1.25*x+pi/6) + 250*sin(2*x-pi/8));
+<span class="comment">% --- plot data with yyaxis</span>
+figure(<span class="string">'Name'</span>,<span class="string">'yyzoom demo'</span>)
+yyaxis <span class="string">left</span>
+plot(x,y1,<span class="string">'o-'</span>)
+ylabel(<span class="string">'y_1'</span>)
+grid <span class="string">on</span>
+yyaxis <span class="string">right</span>
+plot(x,y2,<span class="string">'o-'</span>)
+ylabel(<span class="string">'y_2'</span>)
+</pre><p><img vspace="5" hspace="5" src="yyaxtoolbarHelp_01.png" alt=""> </p><p>If you now use the axes toolbar's 'Zoom In' tool (highlighted above) you would zoom on the active side of the chart only. The active y-ruler side is the last one clicked or modified (the right one in this case), but it is not visually highlighted.</p><h2 id="6">Add the yy-Axtoolbar</h2><pre class="codeinput">yyaxtoolbar
+</pre><p>sets up the yy-axtoolbar with some more icons/buttons:</p><p><img vspace="5" hspace="5" src="yyaxtoolbarHelp_02.png" alt=""> </p><h2 id="8">Use the yy-Axtoolbar Main Buttons</h2><p>These additional toolbar buttons assist you during the interactive exploration of the yyaxis chart:</p><p><b>Active Side Indicator And Toggle</b></p><p><img vspace="5" hspace="5" src="yyaxtoolbarHelp_activeSide.png" alt=""> </p><p>The icon highlights the active side of the chart. The dashes next to the y-axis ruler symbols indicate that the tick values of the ruler are computed automatically by Matlab&reg;, i.e. the ruler's TickValuesMode is 'auto'.</p><p>Click on the button to toggle the active side.</p><p><b>Linear Zoom Link Indicator and Toggle</b></p><p><img vspace="5" hspace="5" src="yyaxtoolbarHelp_zoomLinkState.png" alt=""> </p><p>If this state button's icon is highlighted in blue, both y-axes will zoom simultaneously as described in the yyzoom documentation.</p><p>Click on the button to renew or disable the yyzoom's linear zoom link.</p><p><b>Align Y-Ticks</b></p><p><img vspace="5" hspace="5" src="yyaxtoolbarHelp_alignTicks.png" alt=""> </p><p>Click on this button to align the ticks on both y-axes so that they now <b>share a common major axes grid</b> (see yytick documentation).</p><p>Note that some y-axes limits may be adjusted for that purpose. The little dashes in the Active Side Indicator icon show which ruler still has TickValuesMode='auto'. This is yytick's "primary" ruler, the other one the "dependent" ruler.</p><p>If you want to keep the ticks aligned when zooming in, renew the linear zoom link once (click or double-click the Linear Zoom Link button, whichever results in an activated state).</p><p><img vspace="5" hspace="5" src="yyaxtoolbarHelp_03.png" alt=""> </p><p>Now zooming in a region of the axes canvas...</p><p><img vspace="5" hspace="5" src="yyaxtoolbarHelp_04.png" alt=""> </p><p>affects both y-axes simultaneously and keeps the y-ticks aligned:</p><p><img vspace="5" hspace="5" src="yyaxtoolbarHelp_05.png" alt=""> </p><h2 id="9">Supplemental yy-Axtoolbar Buttons (Drop-down Menu)</h2><p><img vspace="5" hspace="5" src="yyaxtoolbarHelp_dropdown.png" alt=""> </p><p>In the drop-down menu of the yyzoom axes toolbar some more icons show up.</p><p><b>Y-Ticks Auto</b></p><p><img vspace="5" hspace="5" src="yyaxtoolbarHelp_ticksAuto.png" alt=""> </p><p>Reset the TickValuesMode property of both y-rulers back to 'auto'. The Y-Ticks are not necessarily aligned anymore.</p><p><b>LimitMethod Buttons</b></p><p><img vspace="5" hspace="5" src="yyaxtoolbarHelp_limitMethod.png" alt=""> </p><p>Apply one of the three limit methods for automatic y-limit selection (see ylim), from top to bottom: <tt>'tight'</tt>, <tt>'padded'</tt>, <tt>'tickaligned'</tt>. It is taken into account whether there is one dependent y-axis (ticks are kept aligned) or not (methods are applied to each y-axis separately).</p><p><b>Zoom to yyzoom Base Limits</b></p><p><img vspace="5" hspace="5" src="yyaxtoolbarHelp_zoomBase.png" alt=""> </p><p>Zoom to the recent y-limit base values of the linear zoom link.</p><p><b>Limits &amp; Ticks Auto</b></p><p><img vspace="5" hspace="5" src="yyaxtoolbarHelp_zoomAuto.png" alt=""> </p><p>Zoom out all axes, setting both the 'LimitsMode' and the 'TickValuesMode' properties back to 'auto'. The Y-Ticks are not necessarily aligned anymore.</p><p><b>Zoom Reset</b></p><p><img vspace="5" hspace="5" src="yyaxtoolbarHelp_zoomReset.png" alt=""> </p><p>Set the current zoom level as the baseline zoom level as with <tt>zoom('reset')</tt>.</p><h2 id="10">Aligned Ticks and Limits in a Zoomed in Region</h2><p>The following example demonstrates how to zoom in a region and have both data sets displayed with good resolution on their respective y-axis, with aligned ticks and tick-aligned axis limits.</p><p>Choose the x-axis region of interest.</p><p><img vspace="5" hspace="5" src="yyaxtoolbarHelp_06.png" alt=""> </p><p>Remove the current tick alignment and select tight limits.</p><p><img vspace="5" hspace="5" src="yyaxtoolbarHelp_07.png" alt=""> </p><p><img vspace="5" hspace="5" src="yyaxtoolbarHelp_08.png" alt=""> </p><p>Now there are tight limits on each y-axis.</p><p>Enable tick alignment again, renew the linear zoom link (double-click), and choose tick-aligned limits.</p><p><img vspace="5" hspace="5" src="yyaxtoolbarHelp_09.png" alt=""> </p><p><img vspace="5" hspace="5" src="yyaxtoolbarHelp_10.png" alt=""> </p><p>The chart now has easily readable limits and ticks and a good resolution on both y-axes for the region displayed:</p><p><img vspace="5" hspace="5" src="yyaxtoolbarHelp_11.png" alt=""> </p><h2 id="11">See also</h2><p> <a href="yyzoom.html">yyzoom</a>,
+<a href="yytick.html">yytick</a> </p><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2022a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% yyaxtoolbar
+%
+% extended axes toolbar for yyaxis charts 
+%
+%% Syntax
+% 
+% <html></html>
+%
+yyaxtoolbar
+%%
+% adds a custom axes toolbar for yyaxis plots on the current axes to
+% facilitate interactive zooming and setting limits and ticks on both
+% y-axes. 
+%
+yyaxtoolbar(ax)
+%% 
+% adds the toolbar to axes ax.
+%
+%
+% |yyaxtoolbar| will create a yyaxis chart if not yet existing.
+%
+% The following demo shows a typical workflow for interactively exploring
+% yyaxis charts with the aid of the yy-axtoolbar's buttons.
+
+%% Generate a yyaxis Chart
+% 
+
+% REPLACE_WITH_DASH_DASH- sample data
+x = -5:0.1:5;
+y1 = 4+5*sin(0.5*x+pi/6) + sin(x-pi/8);
+y2 = 2e3+3.1*(1000 + 333*sin(1.25*x+pi/6) + 250*sin(2*x-pi/8));
+% REPLACE_WITH_DASH_DASH- plot data with yyaxis
+figure('Name','yyzoom demo')
+yyaxis left
+plot(x,y1,'o-')
+ylabel('y_1')
+grid on
+yyaxis right
+plot(x,y2,'o-')
+ylabel('y_2')
+
+%%%
+% 
+% <<yyaxtoolbarHelp_01.png>>
+% 
+% If you now use the axes toolbar's 'Zoom In' tool (highlighted above) you
+% would zoom on the active side of the chart only. The active y-ruler side
+% is the last one clicked or modified (the right one in this case), but it
+% is not visually highlighted.
+
+%% Add the yy-Axtoolbar
+% 
+
+yyaxtoolbar
+
+%%%
+% sets up the yy-axtoolbar with some more icons/buttons: 
+% 
+% <<yyaxtoolbarHelp_02.png>>
+% 
+
+%% Use the yy-Axtoolbar Main Buttons
+% 
+% These additional toolbar buttons assist you during the interactive
+% exploration of the yyaxis chart:
+%
+% *Active Side Indicator And Toggle*
+% 
+% <<yyaxtoolbarHelp_activeSide.png>>
+%
+% The icon highlights the active side of the chart. The dashes next to the
+% y-axis ruler symbols indicate that the tick values of the ruler are
+% computed automatically by Matlab(R), i.e. the ruler's TickValuesMode is
+% 'auto'. 
+%
+% Click on the button to toggle the active side.
+%
+% *Linear Zoom Link Indicator and Toggle*
+% 
+% <<yyaxtoolbarHelp_zoomLinkState.png>>
+%
+% If this state button's icon is highlighted in blue, both y-axes will zoom
+% simultaneously as described in the yyzoom documentation.
+%
+% Click on the button to renew or disable the yyzoom's linear zoom link.
+%
+% *Align Y-Ticks*
+% 
+% <<yyaxtoolbarHelp_alignTicks.png>>
+%
+% Click on this button to align the ticks on both y-axes so that they now
+% *share a common major axes grid* (see yytick documentation). 
+%
+% Note that some y-axes limits may be adjusted for that purpose. The little
+% dashes in the Active Side Indicator icon show which ruler still has
+% TickValuesMode='auto'. This is yytick's "primary" ruler, the other one
+% the "dependent" ruler.
+%
+% If you want to keep the ticks aligned when zooming in, renew the linear
+% zoom link once (click or double-click the Linear Zoom Link button,
+% whichever results in an activated state).
+%
+% <<yyaxtoolbarHelp_03.png>>
+%
+% Now zooming in a region of the axes canvas...
+%
+% <<yyaxtoolbarHelp_04.png>>
+%
+% affects both y-axes simultaneously and keeps the y-ticks aligned:
+%
+% <<yyaxtoolbarHelp_05.png>>
+%
+% 
+%% Supplemental yy-Axtoolbar Buttons (Drop-down Menu)
+%
+% <<yyaxtoolbarHelp_dropdown.png>>
+%
+% In the drop-down menu of the yyzoom axes toolbar some more icons show up.
+% 
+% *Y-Ticks Auto*
+%
+% <<yyaxtoolbarHelp_ticksAuto.png>>
+%
+% Reset the TickValuesMode property of both y-rulers back to 'auto'.
+% The Y-Ticks are not necessarily aligned anymore.
+% 
+% *LimitMethod Buttons*
+%
+% <<yyaxtoolbarHelp_limitMethod.png>>
+%
+% Apply one of the three limit methods for automatic y-limit selection (see
+% ylim), from top to bottom: |'tight'|, |'padded'|, |'tickaligned'|. It is
+% taken into account whether there is one dependent y-axis (ticks are kept
+% aligned) or not (methods are applied to each y-axis separately).
+%
+% *Zoom to yyzoom Base Limits*
+%
+% <<yyaxtoolbarHelp_zoomBase.png>>
+%
+% Zoom to the recent y-limit base values of the linear zoom link.
+%
+%
+% *Limits & Ticks Auto*
+%
+% <<yyaxtoolbarHelp_zoomAuto.png>>
+%
+% Zoom out all axes, setting both the 'LimitsMode' and the 'TickValuesMode'
+% properties back to 'auto'.
+% The Y-Ticks are not necessarily aligned anymore.
+%
+%
+% *Zoom Reset*
+%
+% <<yyaxtoolbarHelp_zoomReset.png>>
+%
+% Set the current zoom level as the baseline zoom level as with
+% |zoom('reset')|.
+%
+% 
+%% Aligned Ticks and Limits in a Zoomed in Region
+% 
+% The following example demonstrates how to zoom in a region and have both
+% data sets displayed with good resolution on their respective y-axis, with
+% aligned ticks and tick-aligned axis limits.
+% 
+% Choose the x-axis region of interest.
+%
+% <<yyaxtoolbarHelp_06.png>>
+%
+% Remove the current tick alignment and select tight limits.
+%
+% <<yyaxtoolbarHelp_07.png>>
+%
+% <<yyaxtoolbarHelp_08.png>>
+%
+% Now there are tight limits on each y-axis.
+%
+% Enable tick alignment again, renew the linear zoom link (double-click),
+% and choose tick-aligned limits. 
+%
+% <<yyaxtoolbarHelp_09.png>>
+%
+% <<yyaxtoolbarHelp_10.png>>
+%
+% The chart now has easily readable limits and ticks and a good resolution
+% on both y-axes for the region displayed:
+%
+% <<yyaxtoolbarHelp_11.png>>
+%
+%% See also
+% 
+% <html> <a href="yyzoom.html">yyzoom</a>,
+% <a href="yytick.html">yytick</a> </html>
+% 
+
+##### SOURCE END #####
+--></body></html>
