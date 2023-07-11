@@ -4,6 +4,8 @@
     - [ ] scrittura
 - [ ] Presentazione : suddivisione
 - [ ] Train e grafici 
+    - [ ] mostriamo se la strategia dummy vende o compra, e se ha ragione
+    - [X] il grafico delle derivate è concettualmente sbagliato! correggere
 - [ ] Pulizia codice
     - [X] Cancellare simulazione
 - [ ] Train con diverso numero di stati
