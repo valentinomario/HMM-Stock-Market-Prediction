@@ -17,10 +17,10 @@ ulim_date = '2018-01-02';
 llim = indexOfDate(Date,llim_date);
 ulim = indexOfDate(Date,ulim_date);
 
-startPred_date = '2022-01-03';
+startPred_date = '2023-01-03';
 startPred = indexOfDate(Date,startPred_date); % first day of prediction
 lastDate  = indexOfDate(Date, Date(end));   % last avaiable date
-predictionLength = 370;                     % how many days of prediction starting from startPred
+predictionLength = 101;                     % how many days of prediction starting from startPred
                                             % must not exceed (lastDate-startPred)                                           
 if ((startPred+predictionLength)>lastDate) 
         error('Wrong interval');
@@ -161,7 +161,7 @@ predictedClose     = zeros(predictionLength, 1);
 for t = 1:predictionLength
     %disp("Predizione " + t);
     llimPred = (startPred - latency + t);    
-    ulimPred = (startPred + t -1);           
+    ulimPred = (startPred + t - 1);           
 
     predictionFracChange = (Open(llimPred:ulimPred) - Close(llimPred:ulimPred))./Open(llimPred:ulimPred);
     predictionFracHigh   = (High(llimPred:ulimPred) - Open(llimPred:ulimPred))./Open(llimPred:ulimPred);
@@ -184,7 +184,7 @@ for t = 1:predictionLength
         % t-th row filled with current 3D valid prediction
         predObservations3D(t,:) = [edgesFChange(predictedFC), edgesFHigh(predictedFH), edgesFLow(predictedFL)];
     else 
-        predObservation s3D(t,:) = NaN;  % invalid prediction
+        predObservations3D(t,:) = NaN;  % invalid prediction
     end
     
     if (isnan(predictedObs))    % invalide prediction corresponds to invalid value for Close
@@ -223,17 +223,17 @@ for i=1:predictionLength %- 1   % ho tolto il -1 perchè non mi trovavo -L
         investmentSim(i+1)=investmentSim(i); 
     else
         % long
-        if predictedClose(i)>Open(startPred + i-1)
-            investmentSim(i+1) = (1-(Close(startPred + i-1)-Open(startPred + i-1))/Open(startPred + i-1))*investmentSim(i);
+        if predictedClose(i)>Open(startPred + i)
+            investmentSim(i+1) = (1+(Close(startPred + i)-Open(startPred + i))/Open(startPred + i))*investmentSim(i);
         % short
-        elseif predictedClose(i)<Open(startPred + i-1)
-            investmentSim(i+1) = (1-(Open(startPred + i)-Close(startPred + i-1))/Open(startPred + i-1))*investmentSim(i);
+        elseif predictedClose(i)<Open(startPred + i)
+            investmentSim(i+1) = (1+(Open(startPred + i)-Close(startPred + i))/Open(startPred + i))*investmentSim(i);
         end
     end
 
     % graphing results
     yyaxis right
-    p2(i) = plot(Date(startPred +i-1:startPred+i),[investmentSim(i) investmentSim(i+1)],'-');
+    p2(i) = plot(Date(startPred + i - 1:startPred+i),[investmentSim(i) investmentSim(i+1)],'-');
     p2(i).Color = 'black';
 
 
