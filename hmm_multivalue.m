@@ -203,8 +203,8 @@ lastPredDate = (startPred  + predictionLength);
 MAPE = 0;
 figure2 = figure(Name='Candlestick');
 grid on
-%clrs = ['red','green'];  % the two-vector from which to choose
-%candleColor = clrs((Close(startPred : lastPredDate) >= Open(startPred : lastPredDate)) + 1);  % select based on condition
+clrs = ["red","green"];  % the two-vector from which to choose
+candleColor(1:predictionLength+1) = clrs((Close(startPred : lastPredDate) >= Open(startPred : lastPredDate)) + 1);  % select based on condition
 candle(timetable(Date(startPred : lastPredDate), Open(startPred : lastPredDate), High(startPred : lastPredDate), Low(startPred : lastPredDate), Close(startPred : lastPredDate), 'VariableNames', {'Open', 'High', 'Low', 'Close'}));
 figure1 = figure(Name='Real vs predicted data');
 p1 = plot(Date(startPred : lastPredDate), Close(startPred:lastPredDate));
