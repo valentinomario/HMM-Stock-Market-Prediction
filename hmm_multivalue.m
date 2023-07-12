@@ -5,7 +5,7 @@ clc
 disp("Init");
 load DELL.mat;  % Date Open Close High Low
 
-TRAIN = 0;      % see train section: if 0 a specified .mat file is loaded
+TRAIN = 1;      % see train section: if 0 a specified .mat file is loaded
                 %                    if 1 a new training is done
 
 shiftByOne = 1; % see sequences train section: if 0 a new sequence is grouped every #days = latency
@@ -38,13 +38,13 @@ continuous_observations3D = [fracChange, fracHigh, fracLow];
 % uniform intervals to discretize observed parameters
 numberOfPoints = [50 10 10];
 totalPoints = numberOfPoints(1)*numberOfPoints(2)*numberOfPoints(3);
-edgesFChange = linspace(-0.1,0.1,numberOfPoints(1)+1);
-edgesFHigh = linspace(0,0.1,numberOfPoints(2)+1);
-edgesFLow = linspace(0,0.1,numberOfPoints(3)+1);
+edgesFChange = dynamicEdges(fracChange, numberOfPoints(1)); %linspace(-0.1,0.1,numberOfPoints(1)+1);
+edgesFHigh = dynamicEdges(fracHigh, numberOfPoints(2)); %linspace(0,0.1,numberOfPoints(2)+1);
+edgesFLow = dynamicEdges(fracLow, numberOfPoints(3)); %linspace(0,0.1,numberOfPoints(3)+1);
 % discretization of each parameter sequence (overscribed)
-[fracChange, ~] = discretize(fracChange, edgesFChange,'IncludedEdge','right');
-[fracHigh,   ~] = discretize(fracHigh, edgesFHigh,'IncludedEdge','right');
-[fracLow,    ~] = discretize(fracLow, edgesFLow,'IncludedEdge','right');
+[fracChange, ~] = discretize(fracChange, edgesFChange, 'IncludedEdge', 'right');
+[fracHigh,   ~] = discretize(fracHigh, edgesFHigh, 'IncludedEdge', 'right');
+[fracLow,    ~] = discretize(fracLow, edgesFLow, 'IncludedEdge', 'right');
 
 % discretized sequences of observations grouped in a three columns matrix
 % observations3D = [fracChange, fracHigh, fracLow];
@@ -126,7 +126,7 @@ end
 %% train
 disp("Train")
 if (TRAIN)
-    maxIter = 500;      %#ok<UNRCH>
+    maxIter = 1000;      %#ok<UNRCH>
     trainInfo = struct('maxIter', maxIter, 'converged', 0, 'trainingTime', -1);
     lastwarn('', '');
 

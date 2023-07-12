@@ -15,8 +15,8 @@ function n = map3DTo1D(x, y, z, maxX, maxY, maxZ)
 %   - n: L'intero assegnato alla tripla (x, y, z) nello spazio tridimensionale mappato su una singola dimensione.
 %
 % Calcola l'indice 1D corrispondente alla tripla (x, y, z)
-    if z> maxZ || y> maxY || x>maxX
-       error("Terna da convertire non valida: x = %1$.4f \n y= %2$.4f z= %3$.4f",x,y,z);
+    if z > maxZ || y > maxY || x > maxX
+       error("Terna da convertire non valida: x = %1$.4f \n y= %2$.4f z= %3$.4f", x, y, z);
     else 
     n = (z-1)*(maxX*maxY) + (y-1)*maxX + x;
     end 
