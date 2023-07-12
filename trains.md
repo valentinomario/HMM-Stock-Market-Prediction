@@ -11,3 +11,4 @@
 |hmmtrain-2023-07-10-18-58-44|2017-01-03|2018-01-02|4|4|10|2023-01-03|101|59.41%|39.00%|0.89%|risultato molto buono, è stato addestrato nel bull market degli anni prima del covid e testato dal 2023 in poi. Non è andato a convergenza!
 |hmmtrain-2023-07-12-10-50-11.mat|2017-01-03|2018-01-02|4|4|10|2023-01-03|101|59.41%|5.00%|0.95%|Per qualche motivo è andato malissimo
 |hmmtrain-2023-07-12-13-47-04.mat|2020-01-03|2022-01-03|4|4|5|2023-01-03|101|92.08%|58.06%|1.22%|Ottimi risultati ma rendimento simulazione un pò scadente
+|hmmtrain-2023-07-12-15-01-17.mat|2020-04-02|2022-04-01|4|4|10|2023-01-03|101|50.50%|62.75%|1.20%|50% delle previsioni non mi piace|
