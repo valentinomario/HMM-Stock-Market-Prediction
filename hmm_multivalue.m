@@ -5,7 +5,7 @@ clc
 disp("Init");
 load AAPL.mat;  % Date Open Close High Low
 
-TRAIN = 0;      % see train section: if 0 a specified .mat file is loaded
+TRAIN = 1;      % see train section: if 0 a specified .mat file is loaded
                 %                    if 1 a new training is done
 
 shiftByOne = 1; % see sequences train section: if 0 a new sequence is grouped every #days = latency
@@ -197,15 +197,21 @@ end
 fprintf("\n")
 %% grafici
 disp("Plots")
-lastPredDate = (startPred  + predictionLength);
+lastPredDate = (startPred + predictionLength);
+%Date_p = Date(startPred + 1 : lastPredDate); % dates for prediction plotting
+indexpred = startPred + 1 : lastPredDate;
 
 % initialization of MAPE 
 MAPE = 0;
 figure2 = figure(Name='Candlestick');
 grid on
-clrs = ["red","green"];  % the two-vector from which to choose
-candleColor(1:predictionLength+1) = clrs((Close(startPred : lastPredDate) >= Open(startPred : lastPredDate)) + 1);  % select based on condition
-candle(timetable(Date(startPred : lastPredDate), Open(startPred : lastPredDate), High(startPred : lastPredDate), Low(startPred : lastPredDate), Close(startPred : lastPredDate), 'VariableNames', {'Open', 'High', 'Low', 'Close'}));
+LC_candle(timetable(Date(startPred : lastPredDate), Open(startPred : lastPredDate), High(startPred : lastPredDate), Low(startPred : lastPredDate), Close(startPred : lastPredDate), 'VariableNames', {'Open', 'High', 'Low', 'Close'}));
+hold on
+greenIdx = sign(predictedClose - Open(indexpred)) == sign(Close(indexpred) - Open(indexpred));
+plot(Date(indexpred(greenIdx)), predictedClose(greenIdx), '.', MarkerSize=20, Color="#378333")      % green
+plot(Date(indexpred(not(greenIdx))), predictedClose(not(greenIdx)), '.', MarkerSize=20, Color="#a80303")    % red
+
+hold off
 figure1 = figure(Name='Real vs predicted data');
 p1 = plot(Date(startPred : lastPredDate), Close(startPred:lastPredDate));
 grid on
@@ -306,3 +312,4 @@ else
     fprintf("|filename")
 end
 fprintf("|%s|%s|%d|%d|%d|%s|%d|%.2f%%|%.2f%%|%.2f%%|your notes here\n", llim_date, ulim_date, underlyingStates, mixturesNumber, latency, startPred_date, predictionLength, predictionRatio, correctPredictionRatio, MAPE*100);
+figure(figure2)
