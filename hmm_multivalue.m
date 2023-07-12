@@ -3,9 +3,9 @@ clear
 clc
 
 disp("Init");
-load DELL.mat;  % Date Open Close High Low
+load AAPL.mat;  % Date Open Close High Low
 
-TRAIN = 1;      % see train section: if 0 a specified .mat file is loaded
+TRAIN = 0;      % see train section: if 0 a specified .mat file is loaded
                 %                    if 1 a new training is done
 
 shiftByOne = 1; % see sequences train section: if 0 a new sequence is grouped every #days = latency
@@ -17,10 +17,16 @@ ulim_date = '2022-01-03';
 llim = indexOfDate(Date,llim_date);
 ulim = indexOfDate(Date,ulim_date);
 
-startPred_date = '2023-01-03';
+% dynamic edges for discretization: -   if 1, edges are changed accordingly to
+%                                       training set
+%                                   -   if 0, default values for edges are
+%                                       used
+useDynamicEdges = 0;
+
+startPred_date = '2022-01-03';
 startPred = indexOfDate(Date,startPred_date); % first day of prediction
 lastDate  = indexOfDate(Date, Date(end));   % last avaiable date
-predictionLength = 101;                     % how many days of prediction starting from startPred
+predictionLength = 360;                     % how many days of prediction starting from startPred
                                             % must not exceed (lastDate-startPred)                                           
 if ((startPred+predictionLength)>lastDate) 
         error('Wrong interval');
@@ -38,9 +44,17 @@ continuous_observations3D = [fracChange, fracHigh, fracLow];
 % uniform intervals to discretize observed parameters
 numberOfPoints = [50 10 10];
 totalPoints = numberOfPoints(1)*numberOfPoints(2)*numberOfPoints(3);
-edgesFChange = dynamicEdges(fracChange, numberOfPoints(1)); %linspace(-0.1,0.1,numberOfPoints(1)+1);
-edgesFHigh = dynamicEdges(fracHigh, numberOfPoints(2)); %linspace(0,0.1,numberOfPoints(2)+1);
-edgesFLow = dynamicEdges(fracLow, numberOfPoints(3)); %linspace(0,0.1,numberOfPoints(3)+1);
+if useDynamicEdges
+    edgesFChange = dynamicEdges(fracChange, numberOfPoints(1)); %linspace(-0.1,0.1,numberOfPoints(1)+1);
+    edgesFHigh = dynamicEdges(fracHigh, numberOfPoints(2)); %linspace(0,0.1,numberOfPoints(2)+1);
+    edgesFLow = dynamicEdges(fracLow, numberOfPoints(3)); %linspace(0,0.1,numberOfPoints(3)+1);
+else
+    edgesFChange = linspace(-0.1,0.1,numberOfPoints(1)+1);
+    edgesFHigh = linspace(0,0.1,numberOfPoints(2)+1);
+    edgesFLow = linspace(0,0.1,numberOfPoints(3)+1);
+end
+
+
 % discretization of each parameter sequence (overscribed)
 [fracChange, ~] = discretize(fracChange, edgesFChange, 'IncludedEdge', 'right');
 [fracHigh,   ~] = discretize(fracHigh, edgesFHigh, 'IncludedEdge', 'right');
@@ -60,72 +74,73 @@ mixturesNumber = 4;   % number of mixture components for each state
 latency = 10;         % days aka vectors in sequence
 
 %% Markov Chain guesses
-disp("Markov Chain guesses")
-% initialProb = 1/underlyingStates.*ones(1, underlyingStates); % initial probabilities of the states
-
-% transition matrix initialized assuming uniform distribution of probabilities 
-transitionMatrix = 1/underlyingStates.*ones(underlyingStates, underlyingStates);
-% Gaussian Mixture Models fitting
-gm3D = fitgmdist(continuous_observations3D, mixturesNumber*underlyingStates, 'CovarianceType', 'diagonal', 'RegularizationValue', 1e-10, 'Replicates', 10);
-
-% mu sorting
-mu_sorted = zeros(mixturesNumber*underlyingStates,3);
-[mu_sorted(:,1), mu_index] = sort(gm3D.mu(:,1), 1);
-mu_sorted(:,2:3) = gm3D.mu(mu_index,2:3);
-% sigma sorting
-sigma_sorted = gm3D.Sigma(1, 1:3, mu_index);
-
-% emission probabilities initialized to zeros
-emissionProbabilities = zeros(underlyingStates,totalPoints);
-
-% Gaussian Mixture Model for each hidden state
-gm_s = cell(underlyingStates, 1); % _s as state
-for i = 1:underlyingStates
-    gm_s{i} = gmdistribution(mu_sorted((1+(i-1)*mixturesNumber):(i*mixturesNumber),:), ...
-                             sigma_sorted(1,:,(1+(i-1)*mixturesNumber):(i*mixturesNumber)));
+if(TRAIN)
+    disp("Markov Chain guesses")
+    % initialProb = 1/underlyingStates.*ones(1, underlyingStates); % initial probabilities of the states
     
-    for x=edgesFChange(1:end-1)
-        for y=edgesFHigh(1:end-1)
-            for z=edgesFLow(1:end-1)
-
-                % probability of state i emitting observation [x,y,z]
-                p = pdf(gm_s{i},[x y z]);
-                % 3D indexes for observation [x,y,z]
-                x_d = find(edgesFChange==x);
-                y_d = find(edgesFHigh==y);
-                z_d = find(edgesFLow==z);
-                % mapping 3D indexes into 1D indexcontinuous_observations3D n
-                n = map3DTo1D(x_d,y_d,z_d,numberOfPoints(1),numberOfPoints(2),numberOfPoints(3));
-                % (i,n) element filled: i = state i, n = 1D emission index 
-                emissionProbabilities(i,n) = p;
+    % transition matrix initialized assuming uniform distribution of probabilities 
+    transitionMatrix = 1/underlyingStates.*ones(underlyingStates, underlyingStates);
+    % Gaussian Mixture Models fitting
+    gm3D = fitgmdist(continuous_observations3D, mixturesNumber*underlyingStates, 'CovarianceType', 'diagonal', 'RegularizationValue', 1e-10, 'Replicates', 10);
+    
+    % mu sorting
+    mu_sorted = zeros(mixturesNumber*underlyingStates,3);
+    [mu_sorted(:,1), mu_index] = sort(gm3D.mu(:,1), 1);
+    mu_sorted(:,2:3) = gm3D.mu(mu_index,2:3);
+    % sigma sorting
+    sigma_sorted = gm3D.Sigma(1, 1:3, mu_index);
+    
+    % emission probabilities initialized to zeros
+    emissionProbabilities = zeros(underlyingStates,totalPoints);
+    
+    % Gaussian Mixture Model for each hidden state
+    gm_s = cell(underlyingStates, 1); % _s as state
+    for i = 1:underlyingStates
+        gm_s{i} = gmdistribution(mu_sorted((1+(i-1)*mixturesNumber):(i*mixturesNumber),:), ...
+                                 sigma_sorted(1,:,(1+(i-1)*mixturesNumber):(i*mixturesNumber)));
+        
+        for x=edgesFChange(1:end-1)
+            for y=edgesFHigh(1:end-1)
+                for z=edgesFLow(1:end-1)
+    
+                    % probability of state i emitting observation [x,y,z]
+                    p = pdf(gm_s{i},[x y z]);
+                    % 3D indexes for observation [x,y,z]
+                    x_d = find(edgesFChange==x);
+                    y_d = find(edgesFHigh==y);
+                    z_d = find(edgesFLow==z);
+                    % mapping 3D indexes into 1D indexcontinuous_observations3D n
+                    n = map3DTo1D(x_d,y_d,z_d,numberOfPoints(1),numberOfPoints(2),numberOfPoints(3));
+                    % (i,n) element filled: i = state i, n = 1D emission index 
+                    emissionProbabilities(i,n) = p;
+                end
             end
         end
+        % scaled probabilities of state i emitting each of total #observations = totalPoints
+        emissionProbabilities(i,:) = emissionProbabilities(i,:)./sum(emissionProbabilities(i,:));
     end
-    % scaled probabilities of state i emitting each of total #observations = totalPoints
-    emissionProbabilities(i,:) = emissionProbabilities(i,:)./sum(emissionProbabilities(i,:));
 end
-
 %% train sequences
 % construction of matrix observations_train containing train sequences of
 % discretized monodimensional values
-
-if (shiftByOne) % interval shifted by #days = 1
-    observations_train = zeros(length(Date_l) - latency, latency);
-    for i = 1:(length(Date_l) - latency)
-        observations_train(i,:) = observations(i:(i+latency-1));
-    end
-else            % interval shifted by #days = latency
-    observations_train = zeros(ceil(length(Date_l) / latency) - 1, latency); %#ok<UNRCH>
-    for i = 1:ceil(length(Date_l) / latency) - 1
-       startIndex = (i - 1) * latency + 1;
-       endIndex = startIndex + latency - 1;
-       observations_train(i,:) = observations(startIndex:endIndex);
+if(TRAIN)
+    if (shiftByOne) % interval shifted by #days = 1
+        observations_train = zeros(length(Date_l) - latency, latency);
+        for i = 1:(length(Date_l) - latency)
+            observations_train(i,:) = observations(i:(i+latency-1));
+        end
+    else            % interval shifted by #days = latency
+        observations_train = zeros(ceil(length(Date_l) / latency) - 1, latency); %#ok<UNRCH>
+        for i = 1:ceil(length(Date_l) / latency) - 1
+           startIndex = (i - 1) * latency + 1;
+           endIndex = startIndex + latency - 1;
+           observations_train(i,:) = observations(startIndex:endIndex);
+        end
     end
 end
-
 %% train
-disp("Train")
 if (TRAIN)
+    disp("Train")
     maxIter = 1000;      %#ok<UNRCH>
     trainInfo = struct('maxIter', maxIter, 'converged', 0, 'trainingTime', -1);
     lastwarn('', '');
@@ -148,7 +163,7 @@ if (TRAIN)
     load handel
     sound(y,Fs)
 else
-    load("hmmtrain-2023-07-09-12-42-29.mat");
+    load("hmmtrain-2023-07-12-13-47-04.mat");
 end
 
 %% predizione
@@ -205,7 +220,7 @@ indexpred = startPred + 1 : lastPredDate;
 MAPE = 0;
 figure2 = figure(Name='Candlestick');
 grid on
-LC_candle(timetable(Date(startPred : lastPredDate), Open(startPred : lastPredDate), High(startPred : lastPredDate), Low(startPred : lastPredDate), Close(startPred : lastPredDate), 'VariableNames', {'Open', 'High', 'Low', 'Close'}));
+RG_candle(timetable(Date(startPred : lastPredDate), Open(startPred : lastPredDate), High(startPred : lastPredDate), Low(startPred : lastPredDate), Close(startPred : lastPredDate), 'VariableNames', {'Open', 'High', 'Low', 'Close'}));
 hold on
 greenIdx = sign(predictedClose - Open(indexpred)) == sign(Close(indexpred) - Open(indexpred));
 plot(Date(indexpred(greenIdx)), predictedClose(greenIdx), '.', MarkerSize=20, Color="#378333")      % green
