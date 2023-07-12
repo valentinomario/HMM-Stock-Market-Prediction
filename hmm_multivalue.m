@@ -27,7 +27,9 @@ startPred_date = '2022-01-03';
 startPred = indexOfDate(Date,startPred_date); % first day of prediction
 lastDate  = indexOfDate(Date, Date(end));   % last avaiable date
 predictionLength = 360;                     % how many days of prediction starting from startPred
-                                            % must not exceed (lastDate-startPred)                                           
+                                            % must not exceed (lastDate-startPred)     
+filename = ("hmmtrain-2023-07-12-13-47-04.mat")
+
 if ((startPred+predictionLength)>lastDate) 
         error('Wrong interval');
 end
@@ -163,7 +165,7 @@ if (TRAIN)
     load handel
     sound(y,Fs)
 else
-    load("hmmtrain-2023-07-12-13-47-04.mat");
+    load(filename);
 end
 
 %% predizione
@@ -321,10 +323,7 @@ fprintf("Mean Absolute Percentage Error (MAPE): %.2f%%\n", MAPE*100);
 
 
 % print md instruction for appending the train to the table
-if (TRAIN)
-    fprintf("|%s", filename) %#ok<UNRCH>
-else
-    fprintf("|filename")
-end
+
+fprintf("|%s", filename) %#ok<UNRCH>
 fprintf("|%s|%s|%d|%d|%d|%s|%d|%.2f%%|%.2f%%|%.2f%%|your notes here\n", llim_date, ulim_date, underlyingStates, mixturesNumber, latency, startPred_date, predictionLength, predictionRatio, correctPredictionRatio, MAPE*100);
 figure(figure2)
