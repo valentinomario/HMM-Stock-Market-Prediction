@@ -3,17 +3,17 @@ clear
 clc
 
 disp("Init");
-load AAPL.mat;  % Date Open Close High Low
+load DELL.mat;  % Date Open Close High Low
 
-TRAIN = 1;      % see train section: if 0 a specified .mat file is loaded
+TRAIN = 0;      % see train section: if 0 a specified .mat file is loaded
                 %                    if 1 a new training is done
 
 shiftByOne = 1; % see sequences train section: if 0 a new sequence is grouped every #days = latency
                 %                              if 1 a new sequence is grouped every day
 
-% select period of observation, date format MM/DD/YYYY
-llim_date = '2017-01-03';
-ulim_date = '2018-01-02';
+% select period of observation, date format YYYY-MM-DD
+llim_date = '2020-01-02';
+ulim_date = '2022-01-03';
 llim = indexOfDate(Date,llim_date);
 ulim = indexOfDate(Date,ulim_date);
 
@@ -142,7 +142,7 @@ if (TRAIN)
         %error(warnMsg, warnId);
         trinInfo.converged = 0;
     end
-    filename = strcat("hmmtrain-", string(datetime('now', 'format', 'yyyy-MM-dd-HH-mm-ss')), ".mat"), "ESTTR", "ESTEMIT","trainInfo";
+    filename = strcat("hmmtrain-", string(datetime('now', 'format', 'yyyy-MM-dd-HH-mm-ss')), ".mat");
     save(strcat("hmmtrain-", string(datetime('now', 'format', 'yyyy-MM-dd-HH-mm-ss')), ".mat"), "ESTTR", "ESTEMIT","trainInfo");
     % play sound when training is finished
     load handel
