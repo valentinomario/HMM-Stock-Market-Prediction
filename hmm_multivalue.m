@@ -3,7 +3,8 @@ clear
 clc
 
 disp("Init");
-load DELL.mat;  % Date Open Close High Low
+stock_name="DELL.mat";
+load stock_name;% Date Open Close High Low
 
 TRAIN = 0;      % see train section: if 0 a specified .mat file is loaded
                 %                    if 1 a new training is done
@@ -328,5 +329,5 @@ fprintf("Mean Absolute Percentage Error (MAPE): %.2f%%\n", MAPE*100);
 % print md instruction for appending the train to the table
 
 fprintf("|%s", filename) %#ok<UNRCH>
-fprintf("|%s|%s|%d|%d|%d|%s|%d|%.2f%%|%.2f%%|%.2f%%|your notes here\n", llim_date, ulim_date, underlyingStates, mixturesNumber, latency, startPred_date, predictionLength, predictionRatio, correctPredictionRatio, MAPE*100);
+fprintf("|%s|%s|%s|%d|%d|%d|%d|%s|%d|%.2f%%|%.2f%%|%.2f%%|your notes here\n",stock_name, llim_date, ulim_date, underlyingStates, mixturesNumber, latency,dynamicEdges, startPred_date, predictionLength, predictionRatio, correctPredictionRatio, MAPE*100);
 figure(figure2)
