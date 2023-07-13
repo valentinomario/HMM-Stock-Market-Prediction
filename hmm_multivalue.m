@@ -3,16 +3,16 @@ clear
 clc
 
 disp("Init");
-load AAPL.mat;  % Date Open Close High Low
+load DELL.mat;  % Date Open Close High Low
 
-TRAIN = 1;      % see train section: if 0 a specified .mat file is loaded
+TRAIN = 0;      % see train section: if 0 a specified .mat file is loaded
                 %                    if 1 a new training is done
 
 shiftByOne = 1; % see sequences train section: if 0 a new sequence is grouped every #days = latency
                 %                              if 1 a new sequence is grouped every day
 
 % select period of observation, date format YYYY-MM-DD
-llim_date = '2021-01-02';
+llim_date = '2021-01-04';
 ulim_date = '2022-01-03';
 llim = indexOfDate(Date,llim_date);
 ulim = indexOfDate(Date,ulim_date);
@@ -21,17 +21,17 @@ ulim = indexOfDate(Date,ulim_date);
 %                                       training set
 %                                   -   if 0, default values for edges are
 %                                       used
-useDynamicEdges = 0;
+useDynamicEdges = 1;
 
-startPred_date = '2022-01-03';
+startPred_date = '2022-04-08';
 startPred = indexOfDate(Date,startPred_date); % first day of prediction
 lastDate  = indexOfDate(Date, Date(end));   % last avaiable date
-predictionLength = 360;                     % how many days of prediction starting from startPred
+predictionLength = 300;                     % how many days of prediction starting from startPred
                                             % must not exceed (lastDate-startPred)     
 filename = ("hmmtrain-2023-07-12-13-47-04.mat");
 
 if ((startPred+predictionLength)>lastDate) 
-        error('Wrong interval');
+        error('Wrong interval: prediction too long');
 end
 
 Date_l = Date(llim:ulim);      % indexes to easily access loaded data
@@ -47,13 +47,16 @@ continuous_observations3D = [fracChange, fracHigh, fracLow];
 numberOfPoints = [50 10 10];
 totalPoints = numberOfPoints(1)*numberOfPoints(2)*numberOfPoints(3);
 if useDynamicEdges
-    edgesFChange = dynamicEdges(fracChange, numberOfPoints(1)); %linspace(-0.1,0.1,numberOfPoints(1)+1);
-    edgesFHigh = dynamicEdges(fracHigh, numberOfPoints(2)); %linspace(0,0.1,numberOfPoints(2)+1);
-    edgesFLow = dynamicEdges(fracLow, numberOfPoints(3)); %linspace(0,0.1,numberOfPoints(3)+1);
+    edgesFChange = dynamicEdges((Open- Close)./Open, numberOfPoints(1)); %linspace(-0.1,0.1,numberOfPoints(1)+1);
+    edgesFHigh = dynamicEdges((High-Open)./Open, numberOfPoints(2)); %linspace(0,0.1,numberOfPoints(2)+1);
+    edgesFLow = dynamicEdges((Low-Open)./Open, numberOfPoints(3)); %linspace(0,0.1,numberOfPoints(3)+1);
 else
     edgesFChange = linspace(-0.1,0.1,numberOfPoints(1)+1);
     edgesFHigh = linspace(0,0.1,numberOfPoints(2)+1);
     edgesFLow = linspace(0,0.1,numberOfPoints(3)+1);
+%     edgesFChange = linspace(-0.15,0.15,numberOfPoints(1)+1);
+%     edgesFHigh = linspace(0,0.18,numberOfPoints(2)+1);
+%     edgesFLow = linspace(0,0.15,numberOfPoints(3)+1);
 end
 
 
@@ -160,7 +163,7 @@ if (TRAIN)
         trinInfo.converged = 0;
     end
     filename = strcat("hmmtrain-", string(datetime('now', 'format', 'yyyy-MM-dd-HH-mm-ss')), ".mat");
-    save(strcat("hmmtrain-", string(datetime('now', 'format', 'yyyy-MM-dd-HH-mm-ss')), ".mat"), "ESTTR", "ESTEMIT","trainInfo");
+    save(strcat("hmmtrain-", string(datetime('now', 'format', 'yyyy-MM-dd-HH-mm-ss')), ".mat"), "ESTTR", "ESTEMIT","trainInfo","edgesFChange","edgesFHigh","edgesFLow");
     % play sound when training is finished
     load handel
     sound(y,Fs)
