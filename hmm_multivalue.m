@@ -329,5 +329,5 @@ fprintf("Mean Absolute Percentage Error (MAPE): %.2f%%\n", MAPE*100);
 % print md instruction for appending the train to the table
 
 fprintf("|%s", filename) %#ok<UNRCH>
-fprintf("|%s|%s|%s|%d|%d|%d|%d|%s|%d|%.2f%%|%.2f%%|%.2f%%|your notes here\n",stock_name, llim_date, ulim_date, underlyingStates, mixturesNumber, latency,dynamicEdges, startPred_date, predictionLength, predictionRatio, correctPredictionRatio, MAPE*100);
+fprintf("|%s|%s|%s|%d|%d|%d|%d|%s|%d|%.2f%%|%.2f%%|%.2f%%|your notes here\n", extractBefore(stock_name, ".mat"), llim_date, ulim_date, underlyingStates, mixturesNumber, latency, useDynamicEdges, startPred_date, predictionLength, predictionRatio, correctPredictionRatio, MAPE*100);
 figure(figure2)
