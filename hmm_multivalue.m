@@ -4,7 +4,7 @@ clc
 
 disp("Init");
 stock_name="DELL.mat";
-load stock_name;% Date Open Close High Low
+load(stock_name);% Date Open Close High Low
 
 TRAIN = 0;      % see train section: if 0 a specified .mat file is loaded
                 %                    if 1 a new training is done
