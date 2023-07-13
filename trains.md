@@ -12,3 +12,4 @@
 |hmmtrain-2023-07-12-10-50-11.mat| AAPL |2017-01-03|2018-01-02|4|4|10| 0 |2023-01-03|101|59.41%|5.00%|0.95%|Per qualche motivo è andato malissimo
 |hmmtrain-2023-07-12-13-47-04.mat| AAPL |2020-01-03|2022-01-03|4|4|5| 0 |2023-01-03|101|92.08%|58.06%|1.22%|Ottimi risultati ma rendimento simulazione un pò scadente
 |hmmtrain-2023-07-12-15-01-17.mat| AAPL |2020-04-02|2022-04-01|4|4|10| 0 |2023-01-03|101|50.50%|62.75%|1.20%|50% delle previsioni non mi piace|
+|hmmtrain-2023-07-13-21-00-52.mat|DELL|2021-01-04|2022-01-03|4|4|10|1|2022-04-08|300|51.00%|53.59%|1.45%|:\( |
