@@ -6,7 +6,7 @@ disp("Init");
 stock_name="DELL.mat";
 load(stock_name);% Date Open Close High Low
 
-TRAIN = 0;      % see train section: if 0 a specified .mat file is loaded
+TRAIN = 1;      % see train section: if 0 a specified .mat file is loaded
                 %                    if 1 a new training is done
 
 shiftByOne = 1; % see sequences train section: if 0 a new sequence is grouped every #days = latency
@@ -48,9 +48,9 @@ continuous_observations3D = [fracChange, fracHigh, fracLow];
 numberOfPoints = [50 10 10];
 totalPoints = numberOfPoints(1)*numberOfPoints(2)*numberOfPoints(3);
 if useDynamicEdges
-    edgesFChange = dynamicEdges((Open- Close)./Open, numberOfPoints(1)); %linspace(-0.1,0.1,numberOfPoints(1)+1);
-    edgesFHigh = dynamicEdges((High-Open)./Open, numberOfPoints(2)); %linspace(0,0.1,numberOfPoints(2)+1);
-    edgesFLow = dynamicEdges((Low-Open)./Open, numberOfPoints(3)); %linspace(0,0.1,numberOfPoints(3)+1);
+    edgesFChange = dynamicEdges((Open - Close)./Open, numberOfPoints(1)); %linspace(-0.1,0.1,numberOfPoints(1)+1);
+    edgesFHigh = dynamicEdges((High - Open)./Open, numberOfPoints(2)); %linspace(0,0.1,numberOfPoints(2)+1);
+    edgesFLow = dynamicEdges((Open - Low)./Open, numberOfPoints(3)); %linspace(0,0.1,numberOfPoints(3)+1);
 else
     edgesFChange = linspace(-0.1,0.1,numberOfPoints(1)+1);
     edgesFHigh = linspace(0,0.1,numberOfPoints(2)+1);
