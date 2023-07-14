@@ -15,3 +15,4 @@
 |hmmtrain-2023-07-13-21-00-52.mat|DELL|2021-01-04|2022-01-03|4|4|10|1|2022-04-08|300|51.00%|53.59%|1.45%|:\( |
 |hmmtrain-2023-07-13-22-14-14.mat|AAPL|2021-01-04|2022-01-03|4|4|10|0|2022-04-08|300|54.33%|25.77%|1.23%| % corrette pessima ma mape basso, l'investimento fa rendimento 0 a causa dei tantissimi errori
 |hmmtrain-2023-07-14-00-34-47.mat|IBM|2021-01-04|2022-01-03|4|4|10|1|2022-04-08|300|91.00%|49.08%|1.08%|peccato
+|hmmtrain-2023-07-14-11-17-54.mat|DELL|2021-04-01|2022-04-01|4|4|10|1|2023-01-03|101|59.41%|53.33%|1.49%| simulazione investimento non buona BASTA CON DELL PER ME
