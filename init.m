@@ -14,6 +14,8 @@ endTrainDate = '2022-01-03';
 startTrainDateIdx = indexOfDate(Date,startTrainDate);
 endTrainDateIdx = indexOfDate(Date,endTrainDate);
 
+trainIndexes = startTrainDateIdx:endTrainDateIdx;
+
 % dynamic edges for discretization: -   if 1, edges are changed accordingly to
 %                                       training set
 %                                   -   if 0, default values for edges are
@@ -28,7 +30,7 @@ endPredictionDateIdx  = indexOfDate(Date, endPredictionDate);   % last avaiable 
 predictionLength = endPredictionDateIdx - startPredictionDateIdx + 1;
 
 discretizationPoints = [50 10 10];    % uniform intervals to discretize observed parameters
-totalDiscretizationPoints = numberOfPoints(1)*numberOfPoints(2)*numberOfPoints(3);
+totalDiscretizationPoints = discretizationPoints(1)*discretizationPoints(2)*discretizationPoints(3);
 
 if(~TRAIN)
     filename = ("train/hmmtrain-2023-07-14-00-34-47.mat");
