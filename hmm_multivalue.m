@@ -3,7 +3,7 @@ clear
 clc
 
 disp("Init");
-stock_name="DELL.mat";
+stock_name="IBM.mat";
 load(stock_name);% Date Open Close High Low
 
 TRAIN = 1;      % see train section: if 0 a specified .mat file is loaded
@@ -13,8 +13,8 @@ shiftByOne = 1; % see sequences train section: if 0 a new sequence is grouped ev
                 %                              if 1 a new sequence is grouped every day
 
 % select period of observation, date format YYYY-MM-DD
-llim_date = '2021-01-04';
-ulim_date = '2022-01-03';
+llim_date = '2003-02-10';
+ulim_date = '2004-09-10';
 llim = indexOfDate(Date,llim_date);
 ulim = indexOfDate(Date,ulim_date);
 
@@ -24,15 +24,20 @@ ulim = indexOfDate(Date,ulim_date);
 %                                       used
 useDynamicEdges = 1;
 
-startPred_date = '2022-04-08';
+startPred_date = '2004-10-13';
 startPred = indexOfDate(Date,startPred_date); % first day of prediction
 lastDate  = indexOfDate(Date, Date(end));   % last avaiable date
-predictionLength = 300;                     % how many days of prediction starting from startPred
-                                            % must not exceed (lastDate-startPred)     
-filename = ("hmmtrain-2023-07-12-13-47-04.mat");
+predictionLength = 100;                     % how many days of prediction starting from startPred
+                                            % must not exceed (lastDate-startPred)
+numberOfPoints = [50 10 10];    % uniform intervals to discretize observed parameters
+filename = ("train/hmmtrain-2023-07-14-00-34-47.mat");
 
 if ((startPred+predictionLength)>lastDate) 
         error('Wrong interval: prediction too long');
+end
+
+if (~TRAIN)
+    load(filename);
 end
 
 Date_l = Date(llim:ulim);      % indexes to easily access loaded data
@@ -44,22 +49,19 @@ fracLow    = (Open(llim:ulim) - Low(llim:ulim))  ./Open(llim:ulim);
 % sequences of observations grouped in a three columns matrix
 continuous_observations3D = [fracChange, fracHigh, fracLow];
 
-% uniform intervals to discretize observed parameters
-numberOfPoints = [50 10 10];
 totalPoints = numberOfPoints(1)*numberOfPoints(2)*numberOfPoints(3);
-if useDynamicEdges
-    edgesFChange = dynamicEdges((Open - Close)./Open, numberOfPoints(1)); %linspace(-0.1,0.1,numberOfPoints(1)+1);
-    edgesFHigh = dynamicEdges((High - Open)./Open, numberOfPoints(2)); %linspace(0,0.1,numberOfPoints(2)+1);
-    edgesFLow = dynamicEdges((Open - Low)./Open, numberOfPoints(3)); %linspace(0,0.1,numberOfPoints(3)+1);
-else
-    edgesFChange = linspace(-0.1,0.1,numberOfPoints(1)+1);
-    edgesFHigh = linspace(0,0.1,numberOfPoints(2)+1);
-    edgesFLow = linspace(0,0.1,numberOfPoints(3)+1);
-%     edgesFChange = linspace(-0.15,0.15,numberOfPoints(1)+1);
-%     edgesFHigh = linspace(0,0.18,numberOfPoints(2)+1);
-%     edgesFLow = linspace(0,0.15,numberOfPoints(3)+1);
+if exist('edgesFChange','var')==0
+    % if edges are not present in .mat
+    if useDynamicEdges
+        edgesFChange = dynamicEdges((Open - Close)./Open, numberOfPoints(1));
+        edgesFHigh = dynamicEdges((High - Open)./Open, numberOfPoints(2));
+        edgesFLow = dynamicEdges((Open - Low)./Open, numberOfPoints(3));
+    else
+        edgesFChange = linspace(-0.1,0.1,numberOfPoints(1)+1);
+        edgesFHigh = linspace(0,0.1,numberOfPoints(2)+1);
+        edgesFLow = linspace(0,0.1,numberOfPoints(3)+1);
+    end
 end
-
 
 % discretization of each parameter sequence (overscribed)
 [fracChange, ~] = discretize(fracChange, edgesFChange, 'IncludedEdge', 'right');
@@ -80,7 +82,7 @@ mixturesNumber = 4;   % number of mixture components for each state
 latency = 10;         % days aka vectors in sequence
 
 %% Markov Chain guesses
-if(TRAIN)
+if (TRAIN)
     disp("Markov Chain guesses")
     % initialProb = 1/underlyingStates.*ones(1, underlyingStates); % initial probabilities of the states
     
@@ -146,8 +148,8 @@ if(TRAIN)
 end
 %% train
 if (TRAIN)
-    disp("Train")
-    maxIter = 1000;      %#ok<UNRCH>
+    disp("Train")      %#ok<UNRCH>
+    maxIter = 1000;
     trainInfo = struct('maxIter', maxIter, 'converged', 0, 'trainingTime', -1);
     lastwarn('', '');
 
@@ -163,13 +165,11 @@ if (TRAIN)
         %error(warnMsg, warnId);
         trinInfo.converged = 0;
     end
-    filename = strcat("hmmtrain-", string(datetime('now', 'format', 'yyyy-MM-dd-HH-mm-ss')), ".mat");
-    save(strcat("hmmtrain-", string(datetime('now', 'format', 'yyyy-MM-dd-HH-mm-ss')), ".mat"), "ESTTR", "ESTEMIT","trainInfo","edgesFChange","edgesFHigh","edgesFLow");
+    filename = strcat("train/hmmtrain-", string(datetime('now', 'format', 'yyyy-MM-dd-HH-mm-ss')), ".mat");
+    save(filename, "ESTTR", "ESTEMIT","trainInfo","edgesFChange","edgesFHigh","edgesFLow");
     % play sound when training is finished
     load handel
     sound(y,Fs)
-else
-    load(filename);
 end
 
 %% predizione
@@ -328,6 +328,6 @@ fprintf("Mean Absolute Percentage Error (MAPE): %.2f%%\n", MAPE*100);
 
 % print md instruction for appending the train to the table
 
-fprintf("|%s", filename) %#ok<UNRCH>
+fprintf("|%s", extractAfter(filename, "train/")) %#ok<UNRCH>
 fprintf("|%s|%s|%s|%d|%d|%d|%d|%s|%d|%.2f%%|%.2f%%|%.2f%%|your notes here\n", extractBefore(stock_name, ".mat"), llim_date, ulim_date, underlyingStates, mixturesNumber, latency, useDynamicEdges, startPred_date, predictionLength, predictionRatio, correctPredictionRatio, MAPE*100);
 figure(figure2)
