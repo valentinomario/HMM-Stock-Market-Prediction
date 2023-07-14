@@ -3,18 +3,18 @@ clear
 clc
 
 disp("Init");
-stock_name="IBM.mat";
+stock_name="AAPL.mat";
 load(stock_name);% Date Open Close High Low
 
 TRAIN = 1;      % see train section: if 0 a specified .mat file is loaded
                 %                    if 1 a new training is done
 
-shiftByOne = 1; % see sequences train section: if 0 a new sequence is grouped every #days = latency
+shiftByOne = 0; % see sequences train section: if 0 a new sequence is grouped every #days = latency
                 %                              if 1 a new sequence is grouped every day
 
 % select period of observation, date format YYYY-MM-DD
-llim_date = '2003-02-10';
-ulim_date = '2004-09-10';
+llim_date = '2019-01-03';
+ulim_date = '2022-01-03';
 llim = indexOfDate(Date,llim_date);
 ulim = indexOfDate(Date,ulim_date);
 
@@ -24,10 +24,10 @@ ulim = indexOfDate(Date,ulim_date);
 %                                       used
 useDynamicEdges = 1;
 
-startPred_date = '2004-10-13';
+startPred_date = '2023-01-03';
 startPred = indexOfDate(Date,startPred_date); % first day of prediction
 lastDate  = indexOfDate(Date, Date(end));   % last avaiable date
-predictionLength = 100;                     % how many days of prediction starting from startPred
+predictionLength = 101;                     % how many days of prediction starting from startPred
                                             % must not exceed (lastDate-startPred)
 numberOfPoints = [50 10 10];    % uniform intervals to discretize observed parameters
 filename = ("train/hmmtrain-2023-07-14-00-34-47.mat");
@@ -53,9 +53,9 @@ totalPoints = numberOfPoints(1)*numberOfPoints(2)*numberOfPoints(3);
 if exist('edgesFChange','var')==0
     % if edges are not present in .mat
     if useDynamicEdges
-        edgesFChange = dynamicEdges((Open - Close)./Open, numberOfPoints(1));
-        edgesFHigh = dynamicEdges((High - Open)./Open, numberOfPoints(2));
-        edgesFLow = dynamicEdges((Open - Low)./Open, numberOfPoints(3));
+        edgesFChange = dynamicEdges((Open(llim:end) - Close(llim:end))./Open(llim:end), numberOfPoints(1));
+        edgesFHigh = dynamicEdges((High(llim:end) - Open(llim:end))./Open(llim:end), numberOfPoints(2));
+        edgesFLow = dynamicEdges((Open(llim:end) - Low(llim:end))./Open(llim:end), numberOfPoints(3));
     else
         edgesFChange = linspace(-0.1,0.1,numberOfPoints(1)+1);
         edgesFHigh = linspace(0,0.1,numberOfPoints(2)+1);
