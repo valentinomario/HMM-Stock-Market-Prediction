@@ -15,7 +15,7 @@ continuousObservations3D = [fracChange, fracHigh, fracLow];
 if exist('edgesFChange','var')==0
     % if edges are not present in .mat
     if useDynamicEdges
-        edgesFChange = dynamicEdges((Open(startTrainDateIdx:end) - Close(startTrainDateIdx:end))./Open(startTrainDateIdx:end), discretizationPoints(1));
+        edgesFChange = dynamicEdges((Close(startTrainDateIdx:end) - Open(startTrainDateIdx:end))./Open(startTrainDateIdx:end), discretizationPoints(1));
         edgesFHigh = dynamicEdges((High(startTrainDateIdx:end) - Open(startTrainDateIdx:end))./Open(startTrainDateIdx:end), discretizationPoints(2));
         edgesFLow = dynamicEdges((Open(startTrainDateIdx:end) - Low(startTrainDateIdx:end))./Open(startTrainDateIdx:end), discretizationPoints(3));
     else
@@ -260,31 +260,38 @@ end
 
 % plotting investmentSimulation
 yyaxis right
-investSimPlot = plot(Date([predictionIndexes, (predictionIndexes(end) + 1)]), investmentSimulation, '-', 'Color', 'k');
+investSimPlot = plot([Date(predictionIndexes); Date(predictionIndexes(end)) + 1], investmentSimulation, '-', 'Color', 'k');
 
 % adjust axis
+yspan = ceil(max(max(Close(predictionIndexes)), max(investmentSimulation)) - min(min(Close(predictionIndexes)), min(investmentSimulation)));
+yyaxis left
+ylim([min(Close(predictionIndexes)) - 10, min(Close(predictionIndexes)) + yspan + 10])
+yyaxis right
+ylim([min(investmentSimulation) - 10, min(investmentSimulation) + yspan + 10])
+
 
 hold off
 title("Real vs predicted Close values")
 
 % recap
 disp("------------------------------")
-totalNumberOfPredictions = (prediction.bad + prediction.good);
+totalNumberOfPredictions = (predictionInfo.bad + predictionInfo.good);
 predictionRatio = 100 * totalNumberOfPredictions / predictionLength;
-correctPredictionRatio = 100 * prediction.good / totalNumberOfPredictions;
+correctPredictionRatio = 100 * predictionInfo.good / totalNumberOfPredictions;
 fprintf("Total predictions: %d (%.2f%%)\nCorrect derivative: %d (%.2f%%)\nWrong derivative: %d (%.2f%%)\n", ...
     totalNumberOfPredictions, predictionRatio, ...
-    prediction.good, ...
+    predictionInfo.good, ...
     correctPredictionRatio, ...
-    prediction.bad, 100 * prediction.bad / totalNumberOfPredictions);
+    predictionInfo.bad, 100 * predictionInfo.bad / totalNumberOfPredictions);
 
 % Calcolo MAPE
 MAPE = MAPE / totalNumberOfPredictions;
 fprintf("Mean Absolute Percentage Error (MAPE): %.2f%%\n", MAPE*100);
 
 % print md instruction for appending the train to the table
-fprintf("|%s", extractAfter(filename, "train/")) 
-fprintf("|%s|%s|%s|%d|%d|%d|%d|%s|%d|%.2f%%|%.2f%%|%.2f%%|your notes here\n", extractBefore(stock_name, ".mat"), llim_date, ulim_date, underlyingStates, mixturesNumber, latency, useDynamicEdges, startPred_date, predictionLength, predictionRatio, correctPredictionRatio, MAPE*100);
+trainname = extractAfter(extractAfter(filename, "train"), 1);
+fprintf("|%s", trainname) 
+fprintf("|%s|%s|%s|%d|%d|%d|%d|%s|%d|%.2f%%|%.2f%%|%.2f%%|your notes here\n", extractBefore(stock_name, ".mat"), startTrainDate, endTrainDate, underlyingStates, mixturesNumber, latency, useDynamicEdges, startPredictionDate, predictionLength, predictionRatio, correctPredictionRatio, MAPE*100);
 
 
 
