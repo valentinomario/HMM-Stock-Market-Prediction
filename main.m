@@ -19,9 +19,9 @@ if exist('edgesFChange','var')==0
         edgesFHigh = dynamicEdges((High(startTrainDateIdx:end) - Open(startTrainDateIdx:end))./Open(startTrainDateIdx:end), discretizationPoints(2));
         edgesFLow = dynamicEdges((Open(startTrainDateIdx:end) - Low(startTrainDateIdx:end))./Open(startTrainDateIdx:end), discretizationPoints(3));
     else
-        edgesFChange = linspace(-0.1,0.1,numberOfPoints(1)+1);
-        edgesFHigh = linspace(0,0.1,numberOfPoints(2)+1);
-        edgesFLow = linspace(0,0.1,numberOfPoints(3)+1);
+        edgesFChange = linspace(-0.1,0.1,discretizationPoints(1)+1);
+        edgesFHigh = linspace(0,0.1,discretizationPoints(2)+1);
+        edgesFLow = linspace(0,0.1,discretizationPoints(3)+1);
     end
 end
 
@@ -80,8 +80,29 @@ if (TRAIN)
     end
 end
 %% train sequences
+% construction of matrix observations_train containing train sequences of
+% discretized monodimensional values
 
-
+if(TRAIN)
+    if (shiftWindowByOne) % interval shifted by #days = 1
+        totalTrainSequences = length(trainIndexes) - latency + 1;
+        trainingSet = zeros(totalTrainSequences, latency);
+        for i = 1:totalTrainSequences
+            startWindowIdx = i;
+            endWindowIdx = i+latency-1;
+            trainingSet(i,:) = discreteObservations1D(startWindowIdx:endWindowIdx);
+        end
+    else            % interval shifted by #days = latency
+        % last sequence is ignored if length(trainIndexes) mod latency ~=0
+        totalTrainSequences = floor(length(trainIndexes) / latency);
+        trainingSet = zeros(totalTrainSequences, latency); %#ok<UNRCH>
+        for i = 1:totalTrainSequences
+           startWindowIdx = (i - 1) * latency + 1;
+           endWindowIdx = startWindowIdx + latency - 1;
+           trainingSet(i,:) = discreteObservations1D(startWindowIdx:endWindowIdx);
+        end
+    end
+end
 
 
 

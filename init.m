@@ -20,7 +20,7 @@ trainIndexes = startTrainDateIdx:endTrainDateIdx;
 %                                       training set
 %                                   -   if 0, default values for edges are
 %                                       used
-useDynamicEdges = 1;
+useDynamicEdges = 0;
 
 startPredictionDate = '2023-01-03';
 startPredictionDateIdx = indexOfDate(Date,startPredictionDate); % first day of prediction
