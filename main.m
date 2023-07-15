@@ -5,7 +5,7 @@ clc
 init();
 
 % sequences of observations of three different parameters
-fracChange = (Open(trainIndexes) - Close(trainIndexes))./Open(trainIndexes);
+fracChange = (Close(trainIndexes) - Open(trainIndexes))./Open(trainIndexes);
 fracHigh   = (High(trainIndexes) - Open(trainIndexes)) ./Open(trainIndexes);
 fracLow    = (Open(trainIndexes) - Low(trainIndexes))  ./Open(trainIndexes);
 
@@ -104,7 +104,76 @@ if(TRAIN)
     end
 end
 
+%% train
+if (TRAIN)
+    disp("Train")      %#ok<UNRCH>
+    maxIter = 1000;
+    trainInfo = struct('maxIter', maxIter, 'converged', 0, 'trainingTime', -1);
+    lastwarn('', '');
 
+    tic
+    [ESTTR, ESTEMIT] = hmmtrain(trainingSet,transitionMatrix,emissionProbabilities,'Verbose',true,'Maxiterations',maxIter);
+    trainInfo.trainingTime = toc;
+    [warnMsg, warnId] = lastwarn();
+    
+    trainInfo.converged = isempty(warnId);
+    
+    filename = strcat("train/hmmtrain-", string(datetime('now', 'format', 'yyyy-MM-dd-HH-mm-ss')), ".mat");
+    save(filename, "ESTTR", "ESTEMIT","trainInfo","edgesFChange","edgesFHigh","edgesFLow");
+    % play sound when training is finished
+    load handel
+    sound(y,Fs)
+end
+
+%% predizione
+disp("Prediction")
+% initialization of 3D predicted observations
+predictedObservations3D = zeros(predictionLength, 3);
+% initialization of Close values based on predicted data 
+predictedClose = zeros(predictionLength, 1);
+
+for currentPrediction = 1:predictionLength
+    % historical window indexes
+    currentWindowStartIdx = startPredictionDateIdx - latency + currentPrediction;
+    currentWindowEndIdx = startPredictionDateIdx -2 + currentPrediction;
+    
+    % index corresponding to current predicion in Date vector
+    currentPredictionIdx = currentWindowEndIdx +1;
+    currentWindowIndexes = currentWindowStartIdx:currentWindowEndIdx;
+    
+    % historical window observations
+    currentWindowFracChange = (Close(currentWindowIndexes) - Open(currentWindowIndexes))./Open(currentWindowIndexes);
+    currentWindowFracHigh   = (High(currentWindowIndexes) - Open(currentWindowIndexes)) ./Open(currentWindowIndexes);
+    currentWindowFracLow    = (Open(currentWindowIndexes) - Low(currentWindowIndexes))  ./Open(currentWindowIndexes);
+    
+    % discretization of historical data used for prediction
+    [currentWindowFracChange, ~] = discretize(currentWindowFracChange, edgesFChange);
+    [currentWindowFracHigh, ~]   = discretize(currentWindowFracHigh, edgesFHigh);
+    [currentWindowFracLow, ~]    = discretize(currentWindowFracLow, edgesFLow);
+    
+    currentWindow1D = zeros(1, latency-1);
+    for i = 1:(latency-1)
+        currentWindow1D(i) = map3DTo1D(currentWindowFracChange(i), currentWindowFracHigh(i), currentWindowFracLow(i), ...
+            discretizationPoints(1), discretizationPoints(2), discretizationPoints(3));
+    end
+    %prediction
+    fprintf("%.2f%% : ", currentPrediction / predictionLength * 100);
+    predictedObservation1D = hmmPredictObservation(currentWindow1D, ESTTR, ESTEMIT, 'verbose', 1, 'possibleObservations', 1:totalDiscretizationPoints);
+    
+    if (~isnan(predictedObservation1D))
+        % 3D mapping of current valid prediction
+        [predictedFracChange, predictedFracHigh, predictedFracLow] = map1DTo3D(predictedObservation1D, discretizationPoints(1), discretizationPoints(2), discretizationPoints(3));
+        % t-th row filled with current 3D valid prediction
+        predictedObservations3D(currentPrediction,:) = [edgesFChange(predictedFracChange), edgesFHigh(predictedFracHigh), edgesFLow(predictedFracLow)];
+        
+        predictedClose(currentPrediction) = Open(currentPredictionIdx)*(1 + predictedObservations3D(currentPrediction,1));
+    else 
+        % invalid prediction
+        predictedObservations3D(currentPrediction,:) = NaN;
+        predictedClose(currentPrediction) = NaN;
+    end
+
+end
 
 
 

@@ -3,7 +3,7 @@ disp("Init")
 stock_name="AAPL.mat";
 load(stock_name);% Date Open Close High Low
 
-TRAIN = 1;              % see train section: if 0 a specified .mat file is loaded
+TRAIN = 0;              % see train section: if 0 a specified .mat file is loaded
                         %                    if 1 a new training is done
 shiftWindowByOne = 0;   % see sequences train section: if 0 a new sequence is grouped every #days = latency
                         %                              if 1 a new sequence is grouped every day
@@ -28,6 +28,8 @@ startPredictionDateIdx = indexOfDate(Date,startPredictionDate); % first day of p
 endPredictionDate = Date(end);
 endPredictionDateIdx  = indexOfDate(Date, endPredictionDate);   % last avaiable date
 predictionLength = endPredictionDateIdx - startPredictionDateIdx + 1;
+
+predictionIndexes = startPredictionDateIdx:endPredictionDateIdx;
 
 discretizationPoints = [50 10 10];    % uniform intervals to discretize observed parameters
 totalDiscretizationPoints = discretizationPoints(1)*discretizationPoints(2)*discretizationPoints(3);
