@@ -183,7 +183,7 @@ disp("plots")
 
 % initialization of MAPE
 MAPE = 0;
-fig_candlestick = figure(Name='Candlestick', Position=[500 100 700 420]);
+fig_candlestick = figure(Name='Candlestick');
 grid on
 % candlestick plot of actual values
 RG_candle(timetable(Date(predictionIndexes), Open(predictionIndexes), High(predictionIndexes), Low(predictionIndexes), Close(predictionIndexes), 'VariableNames', {'Open', 'High', 'Low', 'Close'}));
@@ -194,7 +194,7 @@ plot(Date(predictionIndexes(whichDotsAreGreen)), predictedClose(whichDotsAreGree
 plot(Date(predictionIndexes(~whichDotsAreGreen)), predictedClose(~whichDotsAreGreen), '.', MarkerSize=20, Color="#A80303");     % green dots
 hold off
 
-fig_closePlot = figure(Name='Real vs predicted Close values', Position=[500 560 700 420]);
+fig_closePlot = figure(Name='Real vs predicted Close values');
 realDataPlot = plot(Date(predictionIndexes), Close(predictionIndexes), "LineWidth", 0.3, "Marker", '.', "MarkerSize", 5);
 grid on
 hold on
