@@ -21,5 +21,8 @@
 |hmmtrain-2023-07-14-17-53-07.mat|IBM|2003-02-10|2004-09-10|4|4|10|1|2004-10-13|100|100.00%|62.00%|0.68%|TRAIN PAPER IBM - ma compra sempre sto deficiente - dynamic edges scemo
 |hmmtrain-2023-07-14-18-21-31.mat|AAPL|2019-01-03|2022-01-03|4|4|10|1|2023-01-03|101|86.14%|41.38%|0.93%| 
 |hmmtrain-2023-07-14-21-59-54.mat|AAPL|2017-01-03|2018-01-02|4|4|10|1|2023-01-03|101|89.11%|70.00%|0.90%|
+#### Nuova versione
+| Nome file | Azione | llim | ulim | underlyingStates | mixturesNumber | latency | Dynamic Edges |inizio predizione | prediction length | % predizioni | % predizioni corrette | MAPE | note |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 |hmmtrain-2023-07-15-14-54-31.mat|IBM|2022-01-03|2023-01-03|4|4|10|1|2023-01-03|131|61.83%|40.74%|1.18%| non mi piace ma compra e vende coerentemente con le previsioni 
-|hmmtrain-2023-07-15-12-06-30.mat|AAPL|2019-01-03|2022-01-03|3|4|10|0|2023-01-03|124|79.03%|45.92%|1.08%|basse predizioni corrette
+|hmmtrain-2023-07-15-12-06-30.mat|AAPL|2019-01-03|2022-01-03|3|4|10|0|2023-01-03|124|79.03%|45.92%|1.08%|basse predizioni corrette ma buon MAPE
