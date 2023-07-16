@@ -202,7 +202,7 @@ hold on
 predictionInfo = struct('good', 0, 'bad', 0, 'invalid', 0);
 
 % instantiate trading simulation array
-investmentSimulation = 100 .* ones(1, predictionLength + 1);
+investmentSimulation = Open(startPredictionDateIdx) .* ones(1, predictionLength + 1);
 % each day the dummy investor decides how to invest -> its capital is
 % calculated for the day after according to the correctness of the guess
 
@@ -263,11 +263,16 @@ yyaxis right
 investSimPlot = plot([Date(predictionIndexes); Date(predictionIndexes(end)) + 1], investmentSimulation, '-', 'Color', 'k');
 
 % adjust axis
-yspan = ceil(max(max(Close(predictionIndexes)), max(investmentSimulation)) - min(min(Close(predictionIndexes)), min(investmentSimulation)));
 yyaxis left
-ylim([min(Close(predictionIndexes)) - 10, min(Close(predictionIndexes)) + yspan + 10])
+ylim([min(Close(predictionIndexes)) * 0.9, max(Close(predictionIndexes)) * 1.1]);
 yyaxis right
-ylim([min(investmentSimulation) - 10, min(investmentSimulation) + yspan + 10])
+ylim([min(Close(predictionIndexes)) * 0.9, max(Close(predictionIndexes)) * 1.1]);
+ticks = yticks;
+ticks = [ticks(ticks<Open(startPredictionDateIdx)), Open(startPredictionDateIdx), ticks(ticks>Open(startPredictionDateIdx))];
+yticks(ticks)
+ticks = (ticks ./ Open(startPredictionDateIdx) - 1) * 100;
+yticklabels(cellstr(strcat(num2str(round(ticks')), "%")))
+yline(Open(startPredictionDateIdx), '--', "LineWidth", 0.1, "Color", [0.2 0.2 0.2])
 
 
 hold off
