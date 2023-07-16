@@ -35,3 +35,4 @@
 |hmmtrain-2023-07-15-20-35-18.mat|AAPL|2003-02-10|2004-09-10|4|4|10|1|1|2004-10-13|70 |70.00%|40.82%|1.78%|TRAIN PAPER AAPL (4 mixtures)
 |hmmtrain-2023-07-16-02-53-51.mat|AAPL|2003-02-10|2004-09-10|4|5|10|1|1|2004-10-13|70 |70.00%|63.27%|1.73%|train paper AAPL (5 mixtures) - siamo ricchi forse
 |---|AAPL|---|---|-|-|-|-|-|2004-09-13|92|77.17%|61.97%|1.64%|test con un mese in più
+|hmmtrain-2023-07-16-11-36-01.mat|IBM|2003-02-10|2004-09-10|4|5|10|1|1|2004-10-13|70|94.29%|57.58%|0.82%|Ottimi risultati per il paper, grafico a candele non bellissimo ma sovraperformiamo IBM
