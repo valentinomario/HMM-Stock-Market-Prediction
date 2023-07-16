@@ -1,5 +1,5 @@
 ## Sintesi train
-| Nome file | Azione | llim | ulim | underlyingStates | mixturesNumber | latency | Dynamic Edges |inizio predizione | prediction length | % predizioni | % predizioni corrette | MAPE | note |
+| Nome file | Azione | llim | ulim | underlyingStates | mixturesNumber | latency | Dynamic Edges |inizio predizione | prediction length | % predizioni | DPA | MAPE | note |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | hmmtrain-2023-07-07-00-14-40.mat | AAPL | 2022-01-03 | 2023-01-03   | 5 | 4 | 10 | 0 |2023-01-03| 101| 88%| 56% |1.52%| mi ricordavo fosse 100% prediction ma evidentemente mi sbagliavo...|
 | hmmtrain-2023-07-07-11-12-06.mat | AAPL | 2020-07-15 | 2021-07-15   | 4 | 4 | 10 | 0 ||||| 1.39%| Length 491, 72.10% valide|
@@ -24,7 +24,7 @@
 
 
 #### Nuova versione
-| Nome file | Azione | llim | ulim | underlyingStates | mixturesNumber | latency |shift window by one| Dynamic Edges |inizio predizione | prediction length | % predizioni | % predizioni corrette | MAPE | note |
+| Nome file | Azione | llim | ulim | underlyingStates | mixturesNumber | latency |shift window by one| Dynamic Edges |inizio predizione | prediction length | % predizioni | DPA | MAPE | note |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 |hmmtrain-2023-07-15-14-54-31.mat|IBM |2022-01-03|2023-01-03|4|4|10|-|1|2023-01-03|131|61.83%|40.74%|1.18%| non mi piace ma compra e vende coerentemente con le previsioni 
 |hmmtrain-2023-07-15-12-06-30.mat|AAPL|2019-01-03|2022-01-03|3|4|10|-|0|2023-01-03|124|79.03%|45.92%|1.08%|basse predizioni corrette ma buon MAPE
