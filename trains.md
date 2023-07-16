@@ -33,3 +33,4 @@
 |hmmtrain-2023-07-15-17-49-07.mat|AAPL|2021-01-04|2022-01-03|4|4|10|1|1|2023-01-03|124|45.97%|49.12%|1.21%|stessa train di prima ma con una finestra di 10, il risultato è leggermente peggiore
 |hmmtrain-2023-07-15-18-46-02.mat|AAPL|2020-08-03|2021-08-02|4|4|5 |1|1|2022-01-03|375|32.80%|53.66%|1.37%|la simulazione di investimento dal 2022 guadagna quanto aapl ma con un "rischio" molto più basso
 |hmmtrain-2023-07-15-20-35-18.mat|AAPL|2003-02-10|2004-09-10|4|4|10|1|1|2004-10-13|70 |70.00%|40.82%|1.78%|TRAIN PAPER AAPL (4 mixtures)
+|hmmtrain-2023-07-16-02-53-51.mat|AAPL|2003-02-10|2004-09-10|4|5|10|1|1|2004-10-13|70 |70.00%|63.27%|1.73%|train paper AAPL (5 mixtures) - siamo ricchi forse
