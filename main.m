@@ -277,7 +277,7 @@ leg_data(1) = plot(nan, nan, '-b', 'Marker', '.', 'MarkerSize', 20);     % blue
 leg_data(2) = plot(nan, nan, '-g', 'Marker', '.', 'MarkerSize', 20);     % green
 leg_data(3) = plot(nan, nan, '-r', 'Marker', '.', 'MarkerSize', 20);     % red
 legend(leg_data, 'Actual stock close', 'Close predictions (correct direction)', 'Close predictions (wrong direction)', 'Location', 'northwest')
-ylim([min(Close(predictionIndexes)) * 0.9, max(Close(predictionIndexes)) * 1.1]);
+ylim([min(Close(predictionIndexes)) * 0.95, max(Close(predictionIndexes)) * 1.05]);
 title(sprintf("%s - Real vs predicted Close values", extractBefore(stock_name, ".mat")))
 
 
@@ -288,11 +288,11 @@ investSimPlot = plot([Date(predictionIndexes); Date(predictionIndexes(end)) + 1]
 
 % adjust axis
 yyaxis left
-ylim([min(Close(predictionIndexes)) * 0.9, max(Close(predictionIndexes)) * 1.1]);
+ylim([min(Close(predictionIndexes)) * 0.95, max(Close(predictionIndexes)) * 1.05]);
 yyaxis right
 ax = gca;
 ax.YColor = 'k';
-ylim([min(Close(predictionIndexes)) * 0.9, max(Close(predictionIndexes)) * 1.1]);
+ylim([min(Close(predictionIndexes)) * 0.95, max(Close(predictionIndexes)) * 1.05]);
 ticks = yticks;
 ticks = [ticks(ticks<Open(startPredictionDateIdx)), Open(startPredictionDateIdx), ticks(ticks>Open(startPredictionDateIdx))];
 yticks(ticks)
