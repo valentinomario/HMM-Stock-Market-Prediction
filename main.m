@@ -234,7 +234,11 @@ for currentPrediction = 1:predictionLength
     % plotting results
     if (~isnan(predictedClose(currentPrediction)))   % there exists a prediction
         yyaxis left
-        predClosePlot(currentPrediction) = plot(Date(currentPredictionDateIdx - 1 : currentPredictionDateIdx), [Close(currentPredictionDateIdx - 1), predictedClose(currentPrediction)], '-');
+        if currentPrediction == 1
+            predClosePlot(currentPrediction) = plot(Date(currentPredictionDateIdx), predictedClose(currentPrediction), '-');
+        else
+            predClosePlot(currentPrediction) = plot(Date(currentPredictionDateIdx - 1 : currentPredictionDateIdx), [Close(currentPredictionDateIdx - 1), predictedClose(currentPrediction)], '-');
+        end
         
         isPredictionGood = sign(predictedClose(currentPrediction) - Open(currentPredictionDateIdx)) == sign(Close(currentPredictionDateIdx) - Open(currentPredictionDateIdx));
         if isPredictionGood
@@ -274,6 +278,13 @@ ticks = (ticks ./ Open(startPredictionDateIdx) - 1) * 100;
 yticklabels(cellstr(strcat(num2str(round(ticks')), "%")))
 yline(Open(startPredictionDateIdx), '--', "LineWidth", 0.1, "Color", [0.2 0.2 0.2])
 
+% legend
+leg = gobjects(4,1);
+leg(1) = plot(nan, nan, '-ob');      % blue
+leg(2) = plot(nan, nan, '-or');     % red
+leg(3) = plot(nan, nan, '-og');     % green
+leg(4) = plot(nan, nan, '-k');      % black
+legend(leg, 'Actual stock close', 'Wrong close predictions', 'Correct close predictions', 'Dummy investor', 'Location', 'northwest')
 
 hold off
 title("Real vs predicted Close values")
