@@ -37,3 +37,4 @@
 |---|AAPL|---|---|-|-|-|-|-|2004-09-13|92|77.17%|61.97%|1.64%|test con un mese in più
 |hmmtrain-2023-07-16-11-36-01.mat|IBM|2003-02-10|2004-09-10|4|5|10|1|1|2004-10-13|70|94.29%|57.58%|0.82%|Ottimi risultati per il paper, grafico a candele non bellissimo ma sovraperformiamo IBM
 |---|IBM|---|---|-|-|-|-|-|2004-09-13|92|95.65%|56.82%|0.74%|risultati migliori dei precedenti con un mese in più. Comunque leggermente peggiore del paper di riferimento (0.6%)
+|hmmtrain-2023-07-16-17-10-39.mat|AAPL|2020-01-03|2022-01-03|4|4|10|1|1|2023-01-03|124|87.90%|36.70%|1.02%|368 iterations, shiftWindby1 =1
