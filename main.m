@@ -190,8 +190,13 @@ RG_candle(timetable(Date(predictionIndexes), Open(predictionIndexes), High(predi
 hold on
 % dots of predictions (green: earned money)
 whichDotsAreGreen = sign(predictedClose - Open(predictionIndexes)) == sign(Close(predictionIndexes) - Open(predictionIndexes));
-plot(Date(predictionIndexes(whichDotsAreGreen)), predictedClose(whichDotsAreGreen), '.', MarkerSize=20, Color="#378333");     % green dots
-plot(Date(predictionIndexes(~whichDotsAreGreen)), predictedClose(~whichDotsAreGreen), '.', MarkerSize=20, Color="#A80303");     % green dots
+plot(Date(predictionIndexes(whichDotsAreGreen)), predictedClose(whichDotsAreGreen), '.', MarkerSize=20, Color="#378333");       % green dots
+plot(Date(predictionIndexes(~whichDotsAreGreen)), predictedClose(~whichDotsAreGreen), '.', MarkerSize=20, Color="#A80303");     % red dots
+% legend
+leg_candlde = gobjects(2,1);
+leg_candlde(1) = plot(nan, nan, '.', MarkerSize=20, Color="#378333");
+leg_candlde(2) = plot(nan, nan, '.', MarkerSize=20, Color="#A80303");
+legend(leg_candlde, 'Close prediction (correct direction)', 'Close prediction (wrong direction)', 'Location', 'northwest')
 hold off
 
 fig_closePlot = figure(Name='Real vs predicted Close values');
@@ -270,6 +275,8 @@ investSimPlot = plot([Date(predictionIndexes); Date(predictionIndexes(end)) + 1]
 yyaxis left
 ylim([min(Close(predictionIndexes)) * 0.9, max(Close(predictionIndexes)) * 1.1]);
 yyaxis right
+ax = gca;
+ax.YColor = 'k';
 ylim([min(Close(predictionIndexes)) * 0.9, max(Close(predictionIndexes)) * 1.1]);
 ticks = yticks;
 ticks = [ticks(ticks<Open(startPredictionDateIdx)), Open(startPredictionDateIdx), ticks(ticks>Open(startPredictionDateIdx))];
@@ -279,12 +286,12 @@ yticklabels(cellstr(strcat(num2str(round(ticks')), "%")))
 yline(Open(startPredictionDateIdx), '--', "LineWidth", 0.1, "Color", [0.2 0.2 0.2])
 
 % legend
-leg = gobjects(4,1);
-leg(1) = plot(nan, nan, '-ob');      % blue
-leg(2) = plot(nan, nan, '-or');     % red
-leg(3) = plot(nan, nan, '-og');     % green
-leg(4) = plot(nan, nan, '-k');      % black
-legend(leg, 'Actual stock close', 'Wrong close predictions', 'Correct close predictions', 'Dummy investor', 'Location', 'northwest')
+leg_data = gobjects(4,1);
+leg_data(1) = plot(nan, nan, '-b', 'Marker', '.', 'MarkerSize', 20);     % blue
+leg_data(2) = plot(nan, nan, '-g', 'Marker', '.', 'MarkerSize', 20);     % green
+leg_data(3) = plot(nan, nan, '-r', 'Marker', '.', 'MarkerSize', 20);     % red
+leg_data(4) = plot(nan, nan, '-k');      % black
+legend(leg_data, 'Actual stock close', 'Close predictions (correct direction)', 'Close predictions (wrong direction)', 'Dummy investor', 'Location', 'northwest')
 
 hold off
 title("Real vs predicted Close values")
