@@ -294,14 +294,17 @@ ax = gca;
 ax.YColor = 'k';
 ylim([min(Close(predictionIndexes)) * 0.95, max(Close(predictionIndexes)) * 1.05]);
 ticks = yticks;
-% ticks = [ticks(ticks<Open(startPredictionDateIdx)), Open(startPredictionDateIdx), ticks(ticks>Open(startPredictionDateIdx))];
-% yticks(ticks)
-% ticks = (ticks ./ Open(startPredictionDateIdx) - 1) * 100;
-% yticklabels(cellstr(strcat(num2str(round(ticks')), "%")))
-ticks = linspace(investmentSimulation(1),max(investmentSimulation),10);
-yticks(ticks)
-ticks = (ticks ./ Open(startPredictionDateIdx) - 1) * 100;
-yticklabels(cellstr(strcat(num2str(round(ticks')), "%")))
+if max(investmentSimulation)<2*max(Close(predictionIndexes))
+    ticks = [ticks(ticks<Open(startPredictionDateIdx)), Open(startPredictionDateIdx), ticks(ticks>Open(startPredictionDateIdx))];
+    yticks(ticks)
+    ticks = (ticks ./ Open(startPredictionDateIdx) - 1) * 100;
+    yticklabels(cellstr(strcat(num2str(round(ticks')), "%")))
+else
+    ticks = linspace(investmentSimulation(1),max(investmentSimulation),10);
+    yticks(ticks)
+    ticks = (ticks ./ Open(startPredictionDateIdx) - 1) * 100;
+    yticklabels(cellstr(strcat(num2str(round(ticks')), "%")))
+end
 yline(Open(startPredictionDateIdx), '--', "LineWidth", 0.1, "Color", [0.2 0.2 0.2])
 
 % legend
