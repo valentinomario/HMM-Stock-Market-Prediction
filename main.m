@@ -294,7 +294,11 @@ ax = gca;
 ax.YColor = 'k';
 ylim([min(Close(predictionIndexes)) * 0.95, max(Close(predictionIndexes)) * 1.05]);
 ticks = yticks;
-ticks = [ticks(ticks<Open(startPredictionDateIdx)), Open(startPredictionDateIdx), ticks(ticks>Open(startPredictionDateIdx))];
+% ticks = [ticks(ticks<Open(startPredictionDateIdx)), Open(startPredictionDateIdx), ticks(ticks>Open(startPredictionDateIdx))];
+% yticks(ticks)
+% ticks = (ticks ./ Open(startPredictionDateIdx) - 1) * 100;
+% yticklabels(cellstr(strcat(num2str(round(ticks')), "%")))
+ticks = linspace(investmentSimulation(1),max(investmentSimulation),10);
 yticks(ticks)
 ticks = (ticks ./ Open(startPredictionDateIdx) - 1) * 100;
 yticklabels(cellstr(strcat(num2str(round(ticks')), "%")))
