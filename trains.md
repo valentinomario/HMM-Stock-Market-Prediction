@@ -1,4 +1,4 @@
-## Sintesi train
+<!---## Sintesi train
 | Nome file | Azione | llim | ulim | underlyingStates | mixturesNumber | latency | Dynamic Edges |inizio predizione | prediction length | % predizioni | DPA | MAPE | note |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | hmmtrain-2023-07-07-00-14-40.mat | AAPL | 2022-01-03 | 2023-01-03   | 5 | 4 | 10 | 0 |2023-01-03| 101| 88%| 56% |1.52%| mi ricordavo fosse 100% prediction ma evidentemente mi sbagliavo...|
@@ -21,9 +21,9 @@
 |hmmtrain-2023-07-14-17-53-07.mat|IBM|2003-02-10|2004-09-10|4|4|10|1|2004-10-13|100|100.00%|62.00%|0.68%|TRAIN PAPER IBM - ma compra sempre sto deficiente - dynamic edges scemo
 |hmmtrain-2023-07-14-18-21-31.mat|AAPL|2019-01-03|2022-01-03|4|4|10|1|2023-01-03|101|86.14%|41.38%|0.93%| 
 |hmmtrain-2023-07-14-21-59-54.mat|AAPL|2017-01-03|2018-01-02|4|4|10|1|2023-01-03|101|89.11%|70.00%|0.90%|
+--->
 
-
-#### Nuova versione
+## Nuova versione
 | Nome file | Azione | llim | ulim | underlyingStates | mixturesNumber | latency |shift window by one| Dynamic Edges |inizio predizione | prediction length | % predizioni | DPA | MAPE | note |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 |hmmtrain-2023-07-15-14-54-31.mat|IBM |2022-01-03|2023-01-03|4|4|10|-|1|2023-01-03|131|61.83%|40.74%|1.18%| non mi piace ma compra e vende coerentemente con le previsioni 
@@ -34,10 +34,13 @@
 |hmmtrain-2023-07-15-18-46-02.mat|AAPL|2020-08-03|2021-08-02|4|4|5 |1|1|2022-01-03|375|32.80%|53.66%|1.37%|la simulazione di investimento dal 2022 guadagna quanto aapl ma con un "rischio" molto più basso
 |hmmtrain-2023-07-15-20-35-18.mat|AAPL|2003-02-10|2004-09-10|4|4|10|1|1|2004-10-13|70 |70.00%|40.82%|1.78%|TRAIN PAPER AAPL (4 mixtures)
 |hmmtrain-2023-07-16-02-53-51.mat|AAPL|2003-02-10|2004-09-10|4|5|10|1|1|2004-10-13|70 |70.00%|63.27%|1.73%|train paper AAPL (5 mixtures) - siamo ricchi forse
-|---|AAPL|---|---|-|-|-|-|-|2004-09-13|92|77.17%|61.97%|1.64%|test con un mese in più
-|hmmtrain-2023-07-16-11-36-01.mat|IBM|2003-02-10|2004-09-10|4|5|10|1|1|2004-10-13|70|94.29%|57.58%|0.82%|Ottimi risultati per il paper, grafico a candele non bellissimo ma sovraperformiamo IBM
-|---|IBM|---|---|-|-|-|-|-|2004-09-13|92|95.65%|56.82%|0.74%|risultati migliori dei precedenti con un mese in più. Comunque leggermente peggiore del paper di riferimento (0.6%)
+|---                             |AAPL|---|---|-|-|-|-|-|2004-09-13|92|77.17%|61.97%|1.64%|test con un mese in più
+|hmmtrain-2023-07-16-11-36-01.mat|IBM |2003-02-10|2004-09-10|4|5|10|1|1|2004-10-13|70|94.29%|57.58%|0.82%|Ottimi risultati per il paper, grafico a candele non bellissimo ma sovraperformiamo IBM
+|---                             |IBM |---|---|-|-|-|-|-|2004-09-13|92|95.65%|56.82%|0.74%|risultati migliori dei precedenti con un mese in più. Comunque leggermente peggiore del paper di riferimento (0.6%)
 |hmmtrain-2023-07-16-17-10-39.mat|AAPL|2020-01-03|2022-01-03|4|4|10|1|1|2023-01-03|124|87.90%|36.70%|1.02%|368 iterations, shiftWindby1 =1
 |hmmtrain-2023-07-16-18-42-33.mat|DELL|2021-01-04|2022-01-03|3|4|10|1|1|2023-01-03|130|53.85%|28.57%|1.70%| Pessima, l'ho fatta con 3 per vedere che effetto ha la diminuzione del numero di stati
-|hmmtrain-2023-07-16-21-17-08.mat|DELL|2021-01-04|2022-01-03|6|4|10|1|1|2023-01-03|130|48.46%|60.32%|1.45%| Migliorata con 6 stati, buono per le derivate corrette ma MAPE alto, l'investimento fa un 20% pottoperformando un pò DELL 
-|hmmtrain-2023-07-16-22-50-11.mat|IBM|2003-02-10|2004-09-10|4|6|10|1|1|2004-09-13|92|95.65%|60.23%|0.68%|OTTIMA IBM sovraperformiamo di molto, non è andata a convergenza!
+|hmmtrain-2023-07-16-21-17-08.mat|DELL|2021-01-04|2022-01-03|6|4|10|1|1|2023-01-03|130|48.46%|60.32%|1.45%| Migliorata con 6 stati, buono per le derivate corrette ma MAPE alto, l'investimento fa un 20% sottoperformando un pò DELL 
+|hmmtrain-2023-07-16-22-50-11.mat|IBM |2003-02-10|2004-09-10|4|6|10|1|1|2004-09-13|92|95.65%|60.23%|0.68%|OTTIMA IBM sovraperformiamo di molto, non è andata a convergenza!
+|hmmtrain-2023-07-17-02-52-06.mat|AAPL|2017-01-03|2019-01-03|4|4|10|1|0|2023-01-03|124|85.48%|40.57%|1.01%| ha un DMA bassissimo 
+|hmmtrain-2023-07-17-09-04-46.mat|IBM |2003-02-10|2004-09-10|5|6|10|1|1|2004-09-13|92|95.65%|44.32%|0.96%| converged=0
+|hmmtrain-2023-07-17-00-10-24.mat|IBM |2003-02-10|2004-09-10|5|5|10|1|1|2004-09-13|92|95.65%|51.14%|0.73%|i dati sembrerebbero buoni, ma di fatto abbiamo perso un sacco di soldi
