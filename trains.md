@@ -42,3 +42,4 @@
 |hmmtrain-2023-07-16-21-17-08.mat|DELL|2021-01-04|2022-01-03|6|4|10|1|1|2023-01-03|130|48.46%|60.32%|1.45%| Migliorata con 6 stati, buono per le derivate corrette ma MAPE alto, l'investimento fa un 20% pottoperformando un pò DELL 
 |hmmtrain-2023-07-16-22-50-11.mat|IBM|2003-02-10|2004-09-10|4|6|10|1|1|2004-09-13|92|95.65%|60.23%|0.68%|OTTIMA IBM sovraperformiamo di molto, non è andata a convergenza!
 |hmmtrain-2023-07-17-02-52-06.mat|AAPL|2017-01-03|2019-01-03|4|4|10|1|0|2023-01-03|124|85.48%|40.57%|1.01%| ha un DMA bassissimo 
+|hmmtrain-2023-07-17-09-04-46.mat|IBM|2003-02-10|2004-09-10|5|6|10|1|1|2004-09-13|92|95.65%|44.32%|0.96%| converged=0
