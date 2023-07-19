@@ -80,7 +80,7 @@ if (TRAIN)
     end
 end
 %% train sequences
-% construction of matrix observations_train containing train sequences of
+% construction of matrix triningSet containing train sequences of
 % discretized monodimensional values
 
 if (TRAIN)
@@ -159,6 +159,33 @@ for currentPrediction = 1:predictionLength
         currentWindow1D(i) = map3DTo1D(currentWindowFracChange(i), currentWindowFracHigh(i), currentWindowFracLow(i), ...
             discretizationPoints(1), discretizationPoints(2), discretizationPoints(3));
     end
+
+    % Fine tune
+    disp("Fine-tuning of the model...")
+    ft_length = 100;
+    ft_windowEndIdx = currentWindowEndIdx;
+    ft_windowStartIdx = ft_windowEndIdx - ft_length + 1;
+    ft_indexes = ft_windowStartIdx : ft_windowEndIdx;
+    [ft_fracChange, ~] = discretize((Close(ft_indexes) - Open(ft_indexes))./Open(ft_indexes), edgesFChange);
+    [ft_fracHigh,   ~] = discretize((High(ft_indexes) - Open(ft_indexes)) ./Open(ft_indexes), edgesFHigh);
+    [ft_fracLow,    ~] = discretize((Open(ft_indexes) - Low(ft_indexes))  ./Open(ft_indexes), edgesFLow);
+    ft_discreteObservations1D = zeros(length(ft_indexes), 1);
+    for i = 1:length(ft_indexes)
+        ft_discreteObservations1D(i) = map3DTo1D(ft_fracChange(i), ft_fracHigh(i), ft_fracLow(i), discretizationPoints(1), discretizationPoints(2), discretizationPoints(3));
+    end
+    ft_totalTuningSequences = length(ft_indexes) - latency + 1;
+    ft_tuningSet = zeros(ft_totalTuningSequences, latency);
+    for i = 1:ft_totalTuningSequences
+        startWindowIdx = i;
+        endWindowIdx = i+latency-1;
+        ft_tuningSet(i,:) = ft_discreteObservations1D(startWindowIdx:endWindowIdx);
+    end
+
+    tic
+    [ESTTR, ESTEMIT] = hmmtrain(ft_tuningSet,ESTTR,ESTREMIT,'Verbose',true,'Maxiterations',100);
+    fprintf("Fine tuning took %.2f secs", toc);
+
+
     % prediction
     fprintf("%.2f%% : ", currentPrediction / predictionLength * 100);
     predictedObservation1D = hmmPredictObservation(currentWindow1D, ESTTR, ESTEMIT, 'verbose', 1, 'possibleObservations', 1:totalDiscretizationPoints);
