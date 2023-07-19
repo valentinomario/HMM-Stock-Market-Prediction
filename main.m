@@ -182,8 +182,8 @@ for currentPrediction = 1:predictionLength
     end
 
     tic
-    [ESTTR, ESTEMIT] = hmmtrain(ft_tuningSet,ESTTR,ESTREMIT,'Verbose',true,'Maxiterations',100);
-    fprintf("Fine tuning took %.2f secs", toc);
+    [ESTTR, ESTEMIT] = hmmtrain(ft_tuningSet,ESTTR,ESTEMIT,'Verbose',true,'Maxiterations',100);
+    fprintf("Fine tuning took %.2f secs\n", toc);
 
 
     % prediction
