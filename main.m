@@ -335,7 +335,7 @@ fprintf("Mean Absolute Percentage Error (MAPE): %.2f%%\n", MAPE*100);
 
 % print md instruction for appending the train to the table
 trainname = extractAfter(extractAfter(filename, "train"), 1);
-fprintf("|%s", trainname) 
+fprintf("||%s", trainname) 
 fprintf("|%s|%s|%s|%d|%d|%d|%d|%d|%s|%d|%.2f%%|%.2f%%|%.2f%%|your notes here\n", extractBefore(stock_name, ".mat"), startTrainDate, endTrainDate, underlyingStates, mixturesNumber, latency,shiftWindowByOne, useDynamicEdges, startPredictionDate, predictionLength, predictionRatio, correctPredictionRatio, MAPE*100);
 
 
