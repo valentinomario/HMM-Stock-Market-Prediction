@@ -57,8 +57,8 @@
 || hmmtrain-2023-07-15-17-49-07.mat | AAPL | 2021-01-04 | 2022-01-03 | 4 | 4 | 10 | 1 | 1 | 2023-01-03 | 124 | 45.97% | 49.12% | 1.21% | Same training as before but with a window of 10, the result is slightly worse |
 || hmmtrain-2023-07-15-18-46-02.mat | AAPL | 2020-08-03 | 2021-08-02 | 4 | 4 | 5 | 1 | 1 | 2022-01-03 | 375 | 32.80% | 53.66% | 1.37% | The investment simulation from 2022 gains as much as AAPL but with much lower "risk" |
 || hmmtrain-2023-07-15-20-35-18.mat | AAPL | 2003-02-10 | 2004-09-10 | 4 | 4 | 10 | 1 | 1 | 2004-10-13 | 70 | 70.00% | 40.82% | 1.78% | AAPL, dates from paper (4 mixtures) |
-|| hmmtrain-2023-07-16-02-53-51.mat | AAPL | 2003-02-10 | 2004-09-10 | 4 | 5 | 10 | 1 | 1 | 2004-10-13 | 70 | 70.00% | 63.27% | 1.73% | AAPL, dates from paper (5 mixtures) - we are rich, maybe |
-|&#11088;| --- | AAPL | --- | --- | - | - | - | - | - | 2004-09-13 | 92 | 77.17% | 61.97% | 1.64% | Test with one more month |
+|&#11088;| hmmtrain-2023-07-16-02-53-51.mat | AAPL | 2003-02-10 | 2004-09-10 | 4 | 5 | 10 | 1 | 1 | 2004-10-13 | 70 | 70.00% | 63.27% | 1.73% | AAPL, dates from paper (5 mixtures) - we are rich, maybe |
+|| --- | AAPL | --- | --- | - | - | - | - | - | 2004-09-13 | 92 | 77.17% | 61.97% | 1.64% | Test with one more month |
 || hmmtrain-2023-07-16-11-36-01.mat | IBM | 2003-02-10 | 2004-09-10 | 4 | 5 | 10 | 1 | 1 | 2004-10-13 | 70 | 94.29% | 57.58% | 0.82% | Excellent results for the paper, the candle chart is not very nice, but we outperform IBM |
 || --- | IBM | --- | --- | - | - | - | - | - | 2004-09-13 | 92 | 95.65% | 56.82% | 0.74% | Better results than previous with one more month. However, slightly worse than the reference paper (0.6%) |
 || hmmtrain-2023-07-16-17-10-39.mat | AAPL | 2020-01-03 | 2022-01-03 | 4 | 4 | 10 | 1 | 1 | 2023-01-03 | 124 | 87.90% | 36.70% | 1.02% | 368 iterations, shiftWindby1 =1 |
