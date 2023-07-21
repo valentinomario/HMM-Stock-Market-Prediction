@@ -12,7 +12,7 @@ In this article, we trained and tested a Hidden Markov Model for the purpose of 
 
 ## Setup and usage
 MATLAB requires the following add-ons:
-- Financial Toolbox&trade; (only used or plotting candlestick charts)
+- Financial Toolbox&trade; (only used for plotting candlestick charts)
 - Statistics and Machine Learning Toolbox&trade;
 
 Clone the repository, then run `setup()` to add the folders to MATLAB path. You can use `setup(1)` to only update the path for the current MATLAB session.
