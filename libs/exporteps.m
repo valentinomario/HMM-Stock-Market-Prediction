@@ -1,7 +1,7 @@
-function savefig(name)
-% savefig(nameString)
+function exporteps(name)
+% exporteps(nameString)
 % Usage: open the figure, then go to the command window and type
-%       >> savefig('name')
+%       >> exporteps('name')
 %        as string, without extension
 %
     f = gcf;
