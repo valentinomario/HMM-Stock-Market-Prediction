@@ -25,7 +25,8 @@ trainIndexes = startTrainDateIdx:endTrainDateIdx;
 
 % select prediction period, date format YYYY-MM-DD 
 startPredictionDate = '2023-01-03';
-endPredictionDate   = Date(end);       
+endPredictionDate   = Date(end);
+%endPredictionDate   = '2023-06-30';
 startPredictionDateIdx = indexOfDate(Date, startPredictionDate);
 endPredictionDateIdx   = indexOfDate(Date, endPredictionDate);    
 predictionLength = endPredictionDateIdx - startPredictionDateIdx + 1;
