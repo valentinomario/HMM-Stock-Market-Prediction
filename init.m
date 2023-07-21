@@ -1,6 +1,6 @@
 disp("Init")
 
-stock_name = "AAPL.mat";
+stock_name = "datasets/mat/AAPL.mat";
 load(stock_name);       % Date Open Close High Low
 
 % see train section: if 0 a specified .mat file is loaded
