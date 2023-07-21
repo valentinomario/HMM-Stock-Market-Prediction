@@ -1,13 +1,14 @@
 maxx = 50;
 maxy = 10;
+maxz = 10;
 err = 0;
-tuttelen = zeros(999,1);
+tuttelen = zeros(5000,1);
 i = 1;
 for x = 1:maxx
     for y = 1:maxy
         for z = 1:10
-            n = map3DTo1D(x,y,z,maxx,maxy);
-            [x_, y_, z_] = map1DTo3D(n,maxx,maxy);
+            n = map3DTo1D(x,y,z,maxx,maxy,maxz);
+            [x_, y_, z_] = map1DTo3D(n,maxx,maxy,maxz);
             disp('tripla:')
             disp([x y z])
             disp('n:')
