@@ -4,11 +4,7 @@ The stock market presents a challenging environment for accurately predicting fu
 
 In this article, we trained and tested a Hidden Markov Model for the purpose of predicting a stock closing price based on its opening price and the preceding day's prices. The model's performance has been evaluated using two indicators:  Mean Average Prediction Error (MAPE), which specifies the average accuracy of our model, and Directional Prediction Accuracy (DPA),  a newly introduced indicator that accounts for the number of fractional change predictions that are correct in sign.
 
-
-- [Simulation Results](./trains.md)
-<div align=center>
 [<kbd> <br> Paper <br> </kbd>][pdf] [<kbd> <br> Simulation results <br> </kbd>][simres]
-</div>
 
 
 [pdf]: ./docs/HMM-Stock-Market-Prediction.pdf
