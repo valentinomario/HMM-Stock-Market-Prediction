@@ -16,24 +16,25 @@ if exist('edgesFChange','var')==0
     % if edges are not present in .mat
     if useDynamicEdges
         edgesFChange = dynamicEdges((Close(startTrainDateIdx:end) - Open(startTrainDateIdx:end))./Open(startTrainDateIdx:end), discretizationPoints(1));
-        edgesFHigh = dynamicEdges((High(startTrainDateIdx:end) - Open(startTrainDateIdx:end))./Open(startTrainDateIdx:end), discretizationPoints(2));
-        edgesFLow = dynamicEdges((Open(startTrainDateIdx:end) - Low(startTrainDateIdx:end))./Open(startTrainDateIdx:end), discretizationPoints(3));
+        edgesFHigh   = dynamicEdges((High(startTrainDateIdx:end)  - Open(startTrainDateIdx:end))./Open(startTrainDateIdx:end), discretizationPoints(2));
+        edgesFLow    = dynamicEdges((Open(startTrainDateIdx:end)  - Low(startTrainDateIdx:end)) ./Open(startTrainDateIdx:end), discretizationPoints(3));
     else
-        edgesFChange = linspace(-0.1, 0.1, discretizationPoints(1)+1);
-        edgesFHigh = linspace(0, 0.1, discretizationPoints(2)+1);
-        edgesFLow = linspace(0, 0.1, discretizationPoints(3)+1);
+        edgesFChange = linspace(-0.1, 0.1,  discretizationPoints(1)+1);
+        edgesFHigh   = linspace( 0,   0.1,  discretizationPoints(2)+1);
+        edgesFLow    = linspace( 0,   0.1,  discretizationPoints(3)+1);
     end
 end
 
 % discretization of each parameter sequence (overscribed)
 [fracChange, ~] = discretize(fracChange, edgesFChange);
-[fracHigh,   ~] = discretize(fracHigh, edgesFHigh);
-[fracLow,    ~] = discretize(fracLow, edgesFLow);
+[fracHigh,   ~] = discretize(fracHigh,   edgesFHigh);
+[fracLow,    ~] = discretize(fracLow,    edgesFLow);
 
 % discretized sequences mapped into a monodimensional array
 discreteObservations1D = zeros(length(trainIndexes), 1);
 for i = 1:length(trainIndexes)
-    discreteObservations1D(i) = map3DTo1D(fracChange(i), fracHigh(i), fracLow(i), discretizationPoints(1), discretizationPoints(2), discretizationPoints(3));
+    discreteObservations1D(i) = map3DTo1D(fracChange(i), fracHigh(i), fracLow(i),...
+                                discretizationPoints(1), discretizationPoints(2), discretizationPoints(3));
 end
 
 %% Markov Chain guesses
@@ -46,7 +47,7 @@ if (TRAIN)
     % gaussin sorting
     sortedMu = zeros(mixturesNumber*underlyingStates, 3);
     [sortedMu(:,1), sortedMuIndexes] = sort(gaussianMixture.mu(:,1), 1);
-    sortedMu(:,2:3) = gaussianMixture.mu(sortedMuIndexes, 2:3);    % sigma sorting 
+    sortedMu(:,2:3) = gaussianMixture.mu(sortedMuIndexes, 2:3);    
     sortedSigma = gaussianMixture.Sigma(1, 1:3, sortedMuIndexes);
     
     % emission probabilities initialized to zeros
@@ -68,19 +69,19 @@ if (TRAIN)
                     xIdx = find(edgesFChange==x);
                     yIdx = find(edgesFHigh==y);
                     zIdx = find(edgesFLow==z);
-                    % mapping 3D indexes into 1D indexcontinuous_observations3D n
+                    % mapping 3D indexes into 1D index 'emissionIdx'
                     emissionIdx = map3DTo1D(xIdx,yIdx,zIdx,discretizationPoints(1),discretizationPoints(2),discretizationPoints(3));
-                    % (i,n) element filled: i = state i, n = 1D emission index 
+                    % (i,emissionIdx) element filled 
                     emissionProbabilities(i,emissionIdx) = p;
                 end
             end
         end
-        % scaled probabilities of state i emitting each of total #observations = totalPoints
+        % scaled probabilities of state i emitting each of total #observations = totalDiscretizationPoints
         emissionProbabilities(i,:) = emissionProbabilities(i,:)./sum(emissionProbabilities(i,:));
     end
 end
 %% train sequences
-% construction of matrix observations_train containing train sequences of
+% construction of matrix trainingSet containing train sequences of
 % discretized monodimensional values
 
 if (TRAIN)
@@ -92,8 +93,8 @@ if (TRAIN)
             endWindowIdx = i+latency-1;
             trainingSet(i,:) = discreteObservations1D(startWindowIdx:endWindowIdx);
         end
-    else            % interval shifted by #days = latency
-        % last sequence is ignored if length(trainIndexes) mod latency ~=0
+    else                   % interval shifted by #days = latency
+        % last sequence is ignored if (length(trainIndexes) mod latency) ~=0
         totalTrainSequences = floor(length(trainIndexes) / latency);
         trainingSet = zeros(totalTrainSequences, latency);
         for i = 1:totalTrainSequences
@@ -120,7 +121,7 @@ if (TRAIN)
     
     filename = strcat("train/hmmtrain-", string(datetime('now', 'format', 'yyyy-MM-dd-HH-mm-ss')), ".mat");
     save(filename, "ESTTR", "ESTEMIT","trainInfo","edgesFChange","edgesFHigh","edgesFLow");
-    % play sound when training is finished
+    % play sound when training is finished ;)
     load handel
     sound(y,Fs)
 end
@@ -129,7 +130,7 @@ end
 disp("Prediction")
 % initialization of 3D predicted observations
 predictedObservations3D = zeros(predictionLength, 3);
-% initialization of Close values based on predicted data 
+% initialization of predicted Close values
 predictedClose = zeros(predictionLength, 1);
 
 for currentPrediction = 1:predictionLength
@@ -151,8 +152,8 @@ for currentPrediction = 1:predictionLength
     
     % discretization of historical data used for prediction
     [currentWindowFracChange, ~] = discretize(currentWindowFracChange, edgesFChange);
-    [currentWindowFracHigh, ~]   = discretize(currentWindowFracHigh, edgesFHigh);
-    [currentWindowFracLow, ~]    = discretize(currentWindowFracLow, edgesFLow);
+    [currentWindowFracHigh, ~]   = discretize(currentWindowFracHigh,   edgesFHigh);
+    [currentWindowFracLow, ~]    = discretize(currentWindowFracLow,    edgesFLow);
     
     currentWindow1D = zeros(1, latency-1);
     for i = 1:(latency-1)
@@ -337,15 +338,3 @@ fprintf("Mean Absolute Percentage Error (MAPE): %.2f%%\n", MAPE*100);
 trainname = extractAfter(extractAfter(filename, "train"), 1);
 fprintf("||%s", trainname) 
 fprintf("|%s|%s|%s|%d|%d|%d|%d|%d|%s|%d|%.2f%%|%.2f%%|%.2f%%|your notes here\n", extractBefore(stock_name, ".mat"), startTrainDate, endTrainDate, underlyingStates, mixturesNumber, latency,shiftWindowByOne, useDynamicEdges, startPredictionDate, predictionLength, predictionRatio, correctPredictionRatio, MAPE*100);
-
-
-
-
-
-
-
-
-
-
-
-
