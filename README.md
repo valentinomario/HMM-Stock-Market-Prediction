@@ -7,7 +7,9 @@ In this article, we trained and tested a Hidden Markov Model for the purpose of 
 
 - [Simulation Results](./trains.md)
 
-[<kbd> <br> Paper <br> </kbd>][Link]
+[<kbd> <br> Paper <br> </kbd>][pdf] [<kbd> <br> Simulation results <br> </kbd>][simres]
 
 
-[Link]: ./docs/HMM-Stock-Market-Prediction.pdf
+
+[pdf]: ./docs/HMM-Stock-Market-Prediction.pdf
+[simres]: ./trains.md
