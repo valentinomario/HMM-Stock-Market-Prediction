@@ -1,4 +1,5 @@
 *.pdf
+!HMM-Stock-Market-Prediction.pdf
 
 # Windows default autosave extension
 *.asv
