@@ -8,17 +8,17 @@ load(stock_name);       % Date Open Close High Low
 TRAIN = 0;
 
 if (~TRAIN)
-    filename = ("train/hmmtrain-2023-07-14-00-34-47.mat");
+    filename = ("train/hmmtrain-2023-07-17-02-52-06.mat");
     load(filename);
 end
 
 % see sequences train section: if 0 a new sequence is grouped every #days = latency
 %                              if 1 a new sequence is grouped every day
-shiftWindowByOne = 0;
+shiftWindowByOne = 1;
 
 % select training period, date format YYYY-MM-DD
-startTrainDate = '2019-01-03';
-endTrainDate   = '2022-01-03';
+startTrainDate = '2017-01-03';
+endTrainDate   = '2019-01-03';
 startTrainDateIdx = indexOfDate(Date, startTrainDate);
 endTrainDateIdx   = indexOfDate(Date, endTrainDate);
 trainIndexes = startTrainDateIdx:endTrainDateIdx;
