@@ -11,9 +11,15 @@ function setup(volatile)
 %   - If the argument is set to 1, the paths are modified only for the 
 %       current session.
 %
+if ispc
     addpath("datasets\mat\")
     addpath("libs")             
     addpath("libs\map")
+else
+    addpath("datasets/mat/")
+    addpath("libs")             
+    addpath("libs/map")
+end
     if (nargin > 0 && volatile==1)
         disp("Path will be modified only for current session.");
     else
