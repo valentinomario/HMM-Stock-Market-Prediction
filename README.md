@@ -12,7 +12,7 @@ In this article, we trained and tested a Hidden Markov Model for the purpose of 
 
 </div>
 
-[pdf]: ./docs/HMM-Stock-Market-Prediction.pdf
+[pdf]: https://arxiv.org/pdf/2310.03775.pdf
 [simres]: ./trains.md
 ## Setup and usage
 MATLAB requires the following add-ons:
