@@ -12,13 +12,16 @@ In this article, we trained and tested a Hidden Markov Model for the purpose of 
 
 [pdf]: https://arxiv.org/pdf/2310.03775.pdf
 
+Below, you can find a table with our simulations results.
+
 <div align = center>
 
 [<kbd> <br> Simulation Results <br> </kbd>][pdf] 
 
 </div>
 
-[simres]: ./trains.md
+[simres]: https://github.com/valentinomario/HMM-Stock-Market-Prediction/blob/main/trains.md
+
 ## Setup and usage
 MATLAB requires the following add-ons:
 - Financial Toolbox&trade; (only used for plotting candlestick charts)
