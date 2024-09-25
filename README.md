@@ -8,11 +8,16 @@ In this article, we trained and tested a Hidden Markov Model for the purpose of 
 
 [<kbd> <br> Paper <br> </kbd>][pdf] 
 
-[<kbd> <br> Simulation results <br> </kbd>][simres]
-
 </div>
 
 [pdf]: https://arxiv.org/pdf/2310.03775.pdf
+
+<div align = center>
+
+[<kbd> <br> Simulation Results <br> </kbd>][pdf] 
+
+</div>
+
 [simres]: ./trains.md
 ## Setup and usage
 MATLAB requires the following add-ons:
