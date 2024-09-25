@@ -16,7 +16,7 @@ Below, you can find a table with our simulations results.
 
 <div align = center>
 
-[<kbd> <br> Simulation Results <br> </kbd>][pdf] 
+[<kbd> <br> Simulation Results <br> </kbd>][simres] 
 
 </div>
 
